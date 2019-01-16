@@ -1,8 +1,9 @@
 import bpy
 from ..utils import *
 from ..error import *
-from bpy.props import *
+from bpy.props import StringProperty
 from bpy_extras.io_utils import ExportHelper, ImportHelper
+from ..maketarget import doSaveTarget
 
 class VIEW3D_OT_SaveasTargetButton(bpy.types.Operator, ExportHelper):
     bl_idname = "mh.saveas_target"

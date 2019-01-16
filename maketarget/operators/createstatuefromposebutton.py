@@ -2,6 +2,14 @@ import bpy
 from ..utils import *
 from ..error import *
 from bpy.props import *
+from ..maketarget import applyArmature, unmakeBaseObj
+
+def createStatueFromPose(context):
+    ob,rig,statue = applyArmature(context)
+    scn = context.scene
+    scn.objects.active = statue
+    scn.layers = statue.layers = 10*[False] + [True] + 9*[False]
+    unmakeBaseObj(statue)
 
 class VIEW3D_OT_CreateStatueFromPoseButton(bpy.types.Operator):
     bl_idname = "mh.create_statue_from_pose"

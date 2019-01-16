@@ -217,24 +217,6 @@ def deleteIrrelevant(ob, affect):
         print(("Deleted verts: %d -> %d" % (first, last)))
         print(("# Verts: %d -> %d" % (nVerts, len(ob.data.vertices))))
 
-
-def loadTargetFile(context, filepath):
-    global Comments
-    setObjectMode(context)
-    ob = context.object
-    settings = getSettings(ob)
-    if ob.MhMeshVertsDeleted:
-        _,Comments = utils.loadTarget(
-            filepath,
-            context,
-            irrelevant=settings.irrelevantVerts[ob.MhAffectOnly],
-            offset=settings.offsetVerts[ob.MhAffectOnly])
-    else:
-        _,Comments = utils.loadTarget(filepath, context)
-
-
-
-
 #----------------------------------------------------------
 #   loadTargetFromMesh(context):
 #----------------------------------------------------------
@@ -270,25 +252,6 @@ def createNewMeshShape(ob, name, scn):
     ob.SelectedOnly = False
     return skey
 
-
-def loadTargetFromMesh(context):
-    ob,trg,scn = getMeshes(context)
-    scn.objects.active = trg
-    bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-    skey = createNewMeshShape(ob, trg.name, scn)
-    nVerts = len(ob.data.vertices)
-    for v in trg.data.vertices[0:nVerts]:
-        skey.data[v.index].co = v.co
-    scn.objects.unlink(trg)
-
-
-
-
-
-#----------------------------------------------------------
-#   loadTargetFromMesh(context):
-#----------------------------------------------------------
-
 def applyArmature(context):
     ob = context.object
     scn = context.scene
@@ -306,95 +269,6 @@ def applyArmature(context):
     statue.parent = None
     return ob,rig,statue
 
-
-def createStatueFromPose(context):
-    ob,rig,statue = applyArmature(context)
-    scn = context.scene
-    scn.objects.active = statue
-    scn.layers = statue.layers = 10*[False] + [True] + 9*[False]
-    unmakeBaseObj(statue)
-
-
-
-
-
-#----------------------------------------------------------
-#   loadStatueMinusPose(context):
-#----------------------------------------------------------
-
-def loadStatueMinusPose(context):
-    ob,statue,scn = getMeshes(context)
-    ob,rig,posed = applyArmature(context)
-    posed.name = "Temporary"
-
-    nVerts = len(ob.data.vertices)
-
-    relMats = {}
-    for vg in ob.vertex_groups:
-        try:
-            pb = rig.pose.bones[vg.name]
-        except KeyError:
-            pb = None
-        if pb:
-            relMats[vg.index] = pb.matrix * pb.bone.matrix_local.inverted()
-        else:
-            print(("Skipping vertexgroup %s" % vg.name))
-            relMats[vg.index] = Matrix().identity()
-
-    svs = statue.data.vertices
-    pvs = posed.data.vertices
-    ovs = ob.data.vertices
-
-    skey = createNewMeshShape(ob, statue.name, scn)
-    relmat = Matrix()
-    y = Vector((0,0,0,1))
-    for v in ob.data.vertices:
-        vn = v.index
-        diff = svs[vn].co - pvs[vn].co
-        if diff.length > 1e-4:
-            relmat.zero()
-            wsum = 0.0
-            for g in v.groups:
-                w = g.weight
-                relmat += w * relMats[g.group]
-                wsum += w
-            factor = 1.0/wsum
-            relmat *= factor
-
-            y[:3] = svs[vn].co
-            x = relmat.inverted() * y
-            skey.data[vn].co = Vector(x[:3])
-
-            z = relmat * x
-
-            xdiff = skey.data[vn].co - ovs[vn].co
-
-            if False and vn in [8059]:
-                print(("\nVert", vn, diff.length, xdiff.length))
-                print(("det", relmat.determinant()))
-                print(("d (%.4f %.4f %.4f)" % tuple(diff)))
-                print(("xd (%.4f %.4f %.4f)" % tuple(xdiff)))
-                checkRotationMatrix(relmat)
-                print(("Rel", relmat))
-                print(("Inv", relmat.inverted()))
-
-                s = pvs[vn].co
-                print(("s ( %.4f  %.4f  %.4f)" % (s[0],s[1],s[2])))
-                print(("x ( %.4f  %.4f  %.4f)" % (x[0],x[1],x[2])))
-                print(("y ( %.4f  %.4f  %.4f)" % (y[0],y[1],y[2])))
-                print(("z ( %.4f  %.4f  %.4f)" % (z[0],z[1],z[2])))
-                o = ovs[vn].co
-                print(("o (%.4f %.4f %.4f)" % (o[0],o[1],o[2])))
-                print(("r (%.4f %.4f %.4f)" % tuple(skey.data[vn].co)))
-
-                for g in v.groups:
-                    print(("\nGrp %d %f %f" % (g.group, g.weight, relMats[g.group].determinant())))
-                    print(("Rel", relMats[g.group]))
-
-    #scn.objects.unlink(statue)
-    scn.objects.unlink(posed)
-
-
 def checkRotationMatrix(mat):
     for n in range(3):
         vec = mat.col[n]
@@ -402,36 +276,6 @@ def checkRotationMatrix(mat):
             print(("No rot %d %f\n%s" % (n, vec.length, mat)))
             return True
     return False
-
-
-
-
-
-#----------------------------------------------------------
-#   newTarget(context):
-#----------------------------------------------------------
-
-def newTarget(context):
-    ob = context.object
-    bpy.ops.object.mode_set(mode='OBJECT')
-    skey = ob.shape_key_add(name="Target", from_mix=False)
-    ob.active_shape_key_index = utils.shapeKeyLen(ob) - 1
-    skey.slider_min = -1.0
-    skey.slider_max = 1.0
-    skey.value = 1.0
-    ob.show_only_shape_key = False
-    ob.use_shape_key_edit_mode = True
-    ob["NTargets"] += 1
-    ob["FilePath"] = 0
-    ob.SelectedOnly = False
-    return
-
-
-
-
-#----------------------------------------------------------
-#   saveTarget(context):
-#----------------------------------------------------------
 
 def doSaveTarget(context, filepath):
     global Comments
@@ -551,75 +395,6 @@ def applyTargets(context):
     return
 
 
-
-
-#----------------------------------------------------------
-#
-#----------------------------------------------------------
-
-def pruneTarget(ob, filepath):
-    settings = getSettings(ob)
-    lines = []
-    before,after = readLines(filepath, -1,-1)
-    for vn,string in after:
-        if vn < settings.nTotalVerts and ob.data.vertices[vn].select:
-            lines.append((vn, string))
-    print(("Pruning", len(before), len(after), len(lines)))
-    fp = open(filepath, "w", encoding="utf-8", newline="\n")
-    for vn,string in lines:
-        fp.write(str(vn) + " " + string)
-    fp.close()
-
-
-def pruneFolder(ob, folder):
-    for file in os.listdir(folder):
-        path = os.path.join(folder, file)
-        if os.path.isdir(path):
-            if ob.MhPruneRecursively:
-                pruneFolder(ob, path)
-        else:
-            (name,ext) = os.path.splitext(file)
-            if ext == ".target":
-                print(("Prune", path))
-                pruneTarget(ob, path)
-
-
-class VIEW3D_OT_PruneTargetFileButton(bpy.types.Operator, ExportHelper):
-    bl_idname = "mh.prune_target_file"
-    bl_label = "Prune Target File"
-    bl_description = "Remove not selected vertices from target file(s)"
-    bl_options = {'UNDO'}
-
-    filename_ext = ".target"
-    filter_glob = StringProperty(default="*.target", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
-        name="File Path",
-        description="File path used for target file",
-        maxlen= 1024, default= "")
-
-    @classmethod
-    def poll(self, context):
-        return (context.object and context.object.MhPruneEnabled)
-
-    def execute(self, context):
-        try:
-            setObjectMode(context)
-            ob = context.object
-            if ob.MhPruneWholeDir:
-                folder = os.path.dirname(self.properties.filepath)
-                pruneFolder(ob, folder)
-                print("Targets pruned")
-            else:
-                pruneTarget(ob, self.properties.filepath)
-                print("Target pruned")
-        except MHError:
-            handleMHError(context)
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        context.window_manager.fileselect_add(self)
-        return {'RUNNING_MODAL'}
-
 #----------------------------------------------------------
 #   batch
 #----------------------------------------------------------
@@ -639,9 +414,6 @@ def batchFitTargets(context, folder):
         elif os.path.isdir(file):
             batchFitTargets(context, file)
     return
-
-
-
 
 #----------------------------------------------------------
 #   batch render
@@ -665,9 +437,6 @@ def batchRenderTargets(context, folder, opengl, outdir):
         elif os.path.isdir(file):
             batchRenderTargets(context, file, opengl, outdir)
     return
-
-
-
 
 #----------------------------------------------------------
 #   fitTarget(context):
@@ -699,8 +468,6 @@ def fitTarget(context):
         mh.proxy.update(ob.active_shape_key.data, ob.active_shape_key.data)
     return
 
-
-
 #----------------------------------------------------------
 #   discardTarget(context):
 #----------------------------------------------------------
@@ -717,14 +484,6 @@ def discardTarget(context):
     checkValid(ob)
     return
 
-
-def discardAllTargets(context):
-    ob = context.object
-    while utils.isTarget(ob):
-        discardTarget(context)
-    return
-
-
 def checkValid(ob):
     nShapes = utils.shapeKeyLen(ob)
     if nShapes != ob["NTargets"]+1:
@@ -733,238 +492,6 @@ def checkValid(ob):
     return True
 
 
-#----------------------------------------------------------
-# symmetrizeTarget(context, left2right, mirror):
-#----------------------------------------------------------
-'''
-class CPairing:
-
-    def __init__(self):
-        self.left = {}
-        self.right = {}
-        self.mid = {}
-        self.epsilon = 1e-3
-        self.verts = []
-        self.nmax = 0
-        self.notfound = []
-
-
-    def setup(self, context, insist):
-        if self.left.keys() and not insist:
-            print("Vertex pair already set up")
-            return
-        ob = context.object
-        self.verts = []
-        for v in ob.data.vertices:
-            x = v.co[0]
-            y = v.co[1]
-            z = v.co[2]
-            self.verts.append((z,y,x,v.index))
-        self.verts.sort()
-        self.nmax = len(self.verts)
-
-        self.left = {}
-        self.right = {}
-        self.mid = {}
-        self.notfound = []
-        for n,data in enumerate(self.verts):
-            (z,y,x,vn) = data
-            self.findMirrorVert(n, vn, x, y, z)
-
-        if self.notfound:
-            print("Did not find mirror image for vertices:")
-            for n,vn,x,y,z in self.notfound:
-                print("  %d at (%.4f %.4f %.4f)" % (vn, x, y, z))
-            self.selectVerts(ob)
-        print("left-right-mid", len(self.left), len(self.right), len(self.mid))
-        return self
-
-
-    def findMirrorVert(self, n, vn, x, y, z):
-        n1 = n - 20
-        n2 = n + 20
-        if n1 < 0: n1 = 0
-        if n2 >= self.nmax: n2 = self.nmax
-        vmir = self.findVert(n, self.verts[n1:n2], vn, -x, y, z)
-        if vmir < 0:
-            self.mid[vn] = vn
-        elif x > self.epsilon:
-            self.left[vn] = vmir
-        elif x < -self.epsilon:
-            self.right[vn] = vmir
-        else:
-            self.mid[vn] = vmir
-
-
-    def selectVerts(self, ob):
-        bpy.ops.object.mode_set(mode='EDIT')
-        bpy.ops.mesh.select_all(action='DESELECT')
-        bpy.ops.object.mode_set(mode='OBJECT')
-        for n,vn,x,y,z in self.notfound:
-            ob.data.vertices[vn].select = True
-        return
-
-
-    def findVert(self, n, verts, v, x, y, z):
-        for (z1,y1,x1,v1) in verts:
-            dx = x-x1
-            dy = y-y1
-            dz = z-z1
-            dist = math.sqrt(dx*dx + dy*dy + dz*dz)
-            if dist < self.epsilon:
-                return v1
-        if abs(x) > self.epsilon:
-            self.notfound.append((n,v,x,y,z))
-        return -1
-'''
-
-def symmetrizeTarget(context, left2right, mirror):
-    #pairing = CPairing().setup(context, False)
-
-    ob = context.object
-    scn = context.scene
-    if not utils.isTarget(ob):
-        return
-    bpy.ops.object.mode_set(mode='OBJECT')
-    verts = ob.active_shape_key.data
-    nVerts = len(verts)
-
-    for vn in list(Mid2Mid.keys()):
-        if vn >= nVerts:
-            break
-        v = verts[vn]
-        v.co[0] = 0
-
-    for (lvn,rvn) in list(Left2Right.items()):
-        if lvn >= nVerts or rvn >= nVerts:
-            break
-        lv = verts[lvn].co
-        rv = verts[rvn].co
-        if mirror:
-            tv = rv.copy()
-            verts[rvn].co = (-lv[0], lv[1], lv[2])
-            verts[lvn].co = (-tv[0], tv[1], tv[2])
-        elif left2right:
-            rv[0] = -lv[0]
-            rv[1] = lv[1]
-            rv[2] = lv[2]
-        else:
-            lv[0] = -rv[0]
-            lv[1] = rv[1]
-            lv[2] = rv[2]
-
-    bverts = ob.data.vertices
-    selected = {}
-    for v in bverts:
-        selected[v.index] = v.select
-
-    bpy.ops.object.mode_set(mode='EDIT')
-    bpy.ops.mesh.select_all(action='DESELECT')
-    bpy.ops.object.mode_set(mode='OBJECT')
-
-    for vn in list(Mid2Mid.keys()):
-        if vn >= nVerts:
-            break
-        bverts[vn].select = selected[vn]
-
-    for (lvn,rvn) in list(Left2Right.items()):
-        if lvn >= nVerts or rvn >= nVerts:
-            break
-        if mirror:
-            bverts[lvn].select = selected[rvn]
-            bverts[rvn].select = selected[lvn]
-        elif left2right:
-            bverts[lvn].select = selected[lvn]
-            bverts[rvn].select = selected[lvn]
-        else:
-            bverts[lvn].select = selected[rvn]
-            bverts[rvn].select = selected[rvn]
-
-    print("Target symmetrized")
-    return
-
-
-
-
-#----------------------------------------------------------
-#   Snapping
-#----------------------------------------------------------
-
-def snapWaist(context):
-    ob = context.object
-    settings = getSettings(ob)
-    if ob.MhIrrelevantDeleted:
-        offset = settings.offsetVerts['Skirt']
-    else:
-        offset = 0
-
-    nVerts = len(settings.skirtWaist)
-    if len(settings.tightsWaist) != nVerts:
-        raise RuntimeError("snapWaist: %d %d" % (len(settings.tightsWaist), nVerts))
-    bpy.ops.object.mode_set(mode='OBJECT')
-    skey = ob.data.shape_keys.key_blocks[-1]
-    verts = skey.data
-    for n in range(nVerts):
-        verts[settings.skirtWaist[n]-offset].co = verts[settings.tightsWaist[n]-offset].co
-
-    bpy.ops.object.mode_set(mode='EDIT')
-    bpy.ops.mesh.select_all(action='DESELECT')
-    bpy.ops.object.mode_set(mode='OBJECT')
-
-
-def straightenSkirt(context):
-    ob = context.object
-    settings = getSettings(ob)
-    if ob.MhIrrelevantDeleted:
-        offset = settings.offsetVerts['Skirt']
-    else:
-        offset = 0
-
-    bpy.ops.object.mode_set(mode='OBJECT')
-    skey = ob.data.shape_keys.key_blocks[-1]
-    verts = skey.data
-
-    for col in settings.XYSkirtColumns:
-        xsum = 0.0
-        ysum = 0.0
-        for vn in col:
-            xsum += verts[vn-offset].co[0]
-            ysum += verts[vn-offset].co[1]
-        x = xsum/len(col)
-        y = ysum/len(col)
-        for vn in col:
-            verts[vn-offset].co[0] = x
-            verts[vn-offset].co[1] = y
-
-    for row in settings.ZSkirtRows:
-        zsum = 0.0
-        for vn in row:
-            zsum += verts[vn-offset].co[2]
-        z = zsum/len(row)
-        for vn in row:
-            verts[vn-offset].co[2] = z
-
-    bpy.ops.object.mode_set(mode='EDIT')
-    bpy.ops.mesh.select_all(action='DESELECT')
-    bpy.ops.object.mode_set(mode='OBJECT')
-
-
-#----------------------------------------------------------
-#   Skip
-#----------------------------------------------------------
-
-def fixInconsistency(context):
-    ob = context.object
-    if ob.data.shape_keys:
-        ob["NTargets"] = len(ob.data.shape_keys.key_blocks)
-    else:
-        ob.shape_key_add(name="Basis")
-        ob["NTargets"] = 0
-
-
-#----------------------------------------------------------
-#   Init
-#----------------------------------------------------------
 
 MTIsInited = False
 

@@ -1,7 +1,23 @@
 import bpy
 from ..utils import *
 from ..error import *
-from bpy.props import *
+from bpy.props import StringProperty
+from ..maketarget import getSettings
+from .. import utils
+
+def loadTargetFile(context, filepath):
+    global Comments
+    setObjectMode(context)
+    ob = context.object
+    settings = getSettings(ob)
+    if ob.MhMeshVertsDeleted:
+        _,Comments = utils.loadTarget(
+            filepath,
+            context,
+            irrelevant=settings.irrelevantVerts[ob.MhAffectOnly],
+            offset=settings.offsetVerts[ob.MhAffectOnly])
+    else:
+        _,Comments = utils.loadTarget(filepath, context)
 
 class VIEW3D_OT_LoadTargetButton(bpy.types.Operator):
     bl_idname = "mh.load_target"

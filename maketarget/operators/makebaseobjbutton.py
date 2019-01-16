@@ -2,6 +2,7 @@ import bpy
 from ..utils import *
 from ..error import *
 from bpy.props import *
+from ..maketarget import makeBaseObj
 
 class VIEW3D_OT_MakeBaseObjButton(bpy.types.Operator):
     bl_idname = "mh.make_base_obj"

@@ -1,7 +1,8 @@
 import bpy
 from ..utils import *
 from ..error import *
-from bpy.props import *
+from bpy.props import StringProperty
+from ..maketarget import doSaveTarget
 
 class VIEW3D_OT_SaveTargetButton(bpy.types.Operator):
     bl_idname = "mh.save_target"

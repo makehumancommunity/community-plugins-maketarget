@@ -2,6 +2,7 @@ import bpy
 from ..utils import *
 from ..error import *
 from bpy.props import *
+from ..maketarget import batchFitTargets
 
 class VIEW3D_OT_BatchFitButton(bpy.types.Operator):
     bl_idname = "mh.batch_fit"
@@ -19,9 +20,6 @@ class VIEW3D_OT_BatchFitButton(bpy.types.Operator):
         scn = context.scene
         folder = os.path.realpath(os.path.expanduser(scn.MhTargetPath))
         batchFitTargets(context, folder)
-        #for subfolder in TargetSubPaths:
-        #    if scn["Mh%s" % subfolder]:
-        #        batchFitTargets(context, os.path.join(folder, subfolder))
         print("All targets fited")
         return {'FINISHED'}
 

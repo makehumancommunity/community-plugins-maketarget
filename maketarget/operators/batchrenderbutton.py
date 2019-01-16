@@ -1,7 +1,8 @@
 import bpy
 from ..utils import *
 from ..error import *
-from bpy.props import *
+from bpy.props import BoolProperty
+from ..maketarget import batchRenderTargets
 
 class VIEW3D_OT_BatchRenderButton(bpy.types.Operator):
     bl_idname = "mh.batch_render"

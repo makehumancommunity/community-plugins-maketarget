@@ -14,5 +14,5 @@ class VIEW3D_OT_InitButton(bpy.types.Operator):
         return context.object
 
     def execute(self, context):
-        initScene(context.scene)
+        #initScene(context.scene)
         return{'FINISHED'}

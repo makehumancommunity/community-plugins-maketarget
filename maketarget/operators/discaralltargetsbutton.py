@@ -2,6 +2,14 @@ import bpy
 from ..utils import *
 from ..error import *
 from bpy.props import *
+from .. import utils
+from ..maketarget import discardTarget
+
+def discardAllTargets(context):
+    ob = context.object
+    while utils.isTarget(ob):
+        discardTarget(context)
+    return
 
 class VIEW3D_OT_DiscardAllTargetsButton(bpy.types.Operator):
     bl_idname = "mh.discard_all_targets"

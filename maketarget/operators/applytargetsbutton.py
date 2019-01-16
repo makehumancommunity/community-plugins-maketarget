@@ -2,6 +2,7 @@ import bpy
 from ..utils import *
 from ..error import *
 from bpy.props import *
+from ..maketarget import applyTargets
 
 class VIEW3D_OT_ApplyTargetsButton(bpy.types.Operator):
     bl_idname = "mh.apply_targets"

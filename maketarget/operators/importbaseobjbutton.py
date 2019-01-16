@@ -2,6 +2,8 @@ import bpy
 from ..utils import *
 from ..error import *
 from bpy.props import *
+from .. import mt, import_obj
+from ..maketarget import afterImport, loadAndApplyTarget
 
 class VIEW3D_OT_ImportBaseObjButton(bpy.types.Operator):
     bl_idname = "mh.import_base_obj"

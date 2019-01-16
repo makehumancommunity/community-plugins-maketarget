@@ -2,6 +2,7 @@ import bpy
 from ..utils import *
 from ..error import *
 from bpy.props import *
+from ..maketarget import discardTarget
 
 class VIEW3D_OT_DiscardTargetButton(bpy.types.Operator):
 

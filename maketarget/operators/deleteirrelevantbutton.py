@@ -2,6 +2,7 @@ import bpy
 from ..utils import *
 from ..error import *
 from bpy.props import *
+from ..maketarget import deleteIrrelevant
 
 class VIEW3D_OT_DeleteIrrelevantButton(bpy.types.Operator):
     bl_idname = "mh.delete_irrelevant"
