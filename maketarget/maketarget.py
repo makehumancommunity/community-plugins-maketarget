@@ -102,18 +102,18 @@ def afterImport(context, filepath, deleteHelpers, useMaterials):
     settings = getSettings(ob)
 
     if ob.MhUseMaterials:
-        addMaterial(ob, 0, "Body", (1,1,1), (0, settings.nTotalVerts))
-        addMaterial(ob, 1, "Tongue", (0.5,0,0.5), settings.vertices["Tongue"])
-        addMaterial(ob, 2, "Joints", (0,1,0), settings.vertices["Joints"])
-        addMaterial(ob, 3, "Eyes", (0,1,1), settings.vertices["Eyes"])
-        addMaterial(ob, 4, "EyeLashes", (1,0,1), settings.vertices["EyeLashes"])
-        addMaterial(ob, 5, "LoTeeth", (0,0.5,0.5), settings.vertices["LoTeeth"])
-        addMaterial(ob, 6, "UpTeeth", (0,0.5,1), settings.vertices["UpTeeth"])
-        addMaterial(ob, 7, "Penis", (0.5,0,1), settings.vertices["Penis"])
-        addMaterial(ob, 8, "Tights", (1,0,0), settings.vertices["Tights"])
-        addMaterial(ob, 9, "Skirt", (0,0,1), settings.vertices["Skirt"])
-        addMaterial(ob, 10, "Hair", (1,1,0), settings.vertices["Hair"])
-        addMaterial(ob, 11, "Ground", (1,0.5,0.5), (settings.vertices["Hair"][1], settings.nTotalVerts))
+        addMaterial(ob, 0, "Body", (1,1,1,1), (0, settings.nTotalVerts))
+        addMaterial(ob, 1, "Tongue", (0.5,0,0.5,1), settings.vertices["Tongue"])
+        addMaterial(ob, 2, "Joints", (0,1,0,1), settings.vertices["Joints"])
+        addMaterial(ob, 3, "Eyes", (0,1,1,1), settings.vertices["Eyes"])
+        addMaterial(ob, 4, "EyeLashes", (1,0,1,1), settings.vertices["EyeLashes"])
+        addMaterial(ob, 5, "LoTeeth", (0,0.5,0.5,1), settings.vertices["LoTeeth"])
+        addMaterial(ob, 6, "UpTeeth", (0,0.5,1,1), settings.vertices["UpTeeth"])
+        addMaterial(ob, 7, "Penis", (0.5,0,1,1), settings.vertices["Penis"])
+        addMaterial(ob, 8, "Tights", (1,0,0,1), settings.vertices["Tights"])
+        addMaterial(ob, 9, "Skirt", (0,0,1,1), settings.vertices["Skirt"])
+        addMaterial(ob, 10, "Hair", (1,1,0,1), settings.vertices["Hair"])
+        addMaterial(ob, 11, "Ground", (1,0.5,0.5,1), (settings.vertices["Hair"][1], settings.nTotalVerts))
 
     if ob.MhDeleteHelpers:
         affect = "Body"
@@ -150,7 +150,7 @@ def loadAndApplyTarget(context):
     except FileNotFoundError:
         found = False
     if not found:
-        raise MHError("Target \"%s\" not found.\nPath \"%s\" does not seem to be the path to the MakeHuman program" % (trgpath, scn.MhProgramPath))
+        raise MHError("Target \"%s\" not found." % (trgpath))
 
     ob = context.object
     props = {}
@@ -167,6 +167,8 @@ def loadAndApplyTarget(context):
 def makeBaseObj(context):
     mh.proxy = None
     ob = context.object
+    if ob is None:
+        return
     if ob.type != 'MESH':
         return
     for mod in ob.modifiers:
@@ -229,7 +231,7 @@ def getMeshes(context):
         raise MHError("Active object %s is not a base object" % ob.name)
     trg = None
     for ob1 in scn.objects:
-        if ob1.select and ob1.type == 'MESH' and ob1 != ob:
+        if ob1.select_get() and ob1.type == 'MESH' and ob1 != ob:
             trg = ob1
             break
     if not trg:

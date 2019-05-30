@@ -63,6 +63,7 @@ print(("Loading maketarget v %d.%d.%d" % bl_info["version"]))
 
 from .constantsandproperties import registerMakeTargetObjectProperties, registerMakeTargetSceneProperties
 from .operators import *
+from .error import *
 
 from . import mh
 from . import symmetry_map
@@ -289,7 +290,8 @@ classes = [
     MKT_PT_MakeTargetPanel,
     MKT_PT_MakeTargetBatchPanel,
     MKT_PT_McpPanel,
-    MKT_OT_ExportObj
+    MKT_OT_ExportObj,
+    ErrorOperator
 ]
 
 classes.extend(MAKETARGET_OPERATOR_CLASSES)

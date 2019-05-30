@@ -87,7 +87,7 @@ def importBaseMhclo(context, filepath=None):
 #----------------------------------------------------------
 
 def importObj(filepath, context, addBasisKey=True):
-    scn = context.scene
+    scn = context.collection
     obname = utils.nameFromPath(filepath)
     fp = open(filepath, "rU")
     print(("Importing %s" % filepath))
@@ -145,7 +145,7 @@ def importObj(filepath, context, addBasisKey=True):
     if texverts:
         addUvLayerBMesh(obname, me, texverts, texfaces)
 
-    context.collection.objects.link(ob)
+    scn.objects.link(ob)
     ob.select_set(True)
     bpy.context.view_layer.objects.active = ob
     if addBasisKey:
