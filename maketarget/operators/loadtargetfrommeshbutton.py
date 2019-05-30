@@ -6,7 +6,7 @@ from ..maketarget import getMeshes, createNewMeshShape
 
 def loadTargetFromMesh(context):
     ob,trg,scn = getMeshes(context)
-    scn.objects.active = trg
+    bpy.context.view_layer.objects.active = trg
     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
     skey = createNewMeshShape(ob, trg.name, scn)
     nVerts = len(ob.data.vertices)

@@ -9,7 +9,7 @@ class VIEW3D_OT_BatchRenderButton(bpy.types.Operator):
     bl_label = "Batch Render"
     bl_description = "Render all targets in directory"
     bl_options = {'UNDO'}
-    opengl = BoolProperty()
+    opengl : BoolProperty()
 
     @classmethod
     def poll(self, context):

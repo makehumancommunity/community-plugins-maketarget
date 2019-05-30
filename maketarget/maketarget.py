@@ -140,6 +140,7 @@ def addMaterial(ob, index, name, color, verts):
 
 def loadAndApplyTarget(context):
     bodytype = context.scene.MhBodyType
+    scn = context.scene
     if bodytype == 'None':
         return
     trgpath = os.path.join(os.path.dirname(__file__), "../makeclothes/targets", bodytype + ".target")
@@ -260,7 +261,7 @@ def applyArmature(context):
         raise MHError("Parent of %s is not an armature" % ob)
 
     bpy.ops.object.select_all(action='DESELECT')
-    ob.select = True
+    ob.select_set(True)
     bpy.ops.object.duplicate()
     bpy.ops.object.shape_key_remove(all=True)
     bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Armature")
@@ -357,7 +358,7 @@ def saveVerts(fp, ob, verts, saveAll, first, last, offs):
         vco = verts[n-offs]
         bv = ob.data.vertices[n-offs]
         vec = vco - bv.co
-        if vec.length > Epsilon and (saveAll or bv.select):
+        if vec.length > Epsilon and (saveAll or bv.select_get()):
             fp.write("%d %s %s %s\n" % (n, round(vec[0]), round(vec[2]), round(-vec[1])))
 
 

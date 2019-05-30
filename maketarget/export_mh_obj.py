@@ -107,7 +107,7 @@ def exportObjFile(path, groupsAsMaterials, context):
         fp.write("vn %.4f %.4f %.4f\n" % (v.normal[0], v.normal[2], -v.normal[1]))
 
     info =  (-2, None)
-    if me.uv_textures:
+    if me.uv_layers:
         (uvFaceVerts, texVerts, nTexVerts) = setupTexVerts(me, faces)
         for vtn in range(nTexVerts):
             vt = texVerts[vtn]
