@@ -194,8 +194,8 @@ class VIEW3D_OT_LoadMhpButton(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     filename_ext = ".mhp"
-    filter_glob = StringProperty(default="*.mhp", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.mhp", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for mhp file",
         maxlen= 1024, default= "")
@@ -226,8 +226,8 @@ class VIEW3D_OT_SaveasMhpFileButton(bpy.types.Operator, ExportHelper):
     bl_options = {'UNDO'}
 
     filename_ext = ".mhp"
-    filter_glob = StringProperty(default="*.mhp", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.mhp", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for mhp file",
         maxlen= 1024, default= "")
@@ -264,7 +264,7 @@ def saveBvhFile(context, filepath):
         roots = rigRoots(rig)
         if len(roots) > 1:
             raise MHError("Armature %s has multiple roots: %s" % (rig.name, roots))
-        scn.objects.active = rig
+        bpy.context.view_layer.objects.active = rig
         (pname, ext) = os.path.splitext(filepath)
         bvhpath = pname + ".bvh"
 
@@ -275,7 +275,7 @@ def saveBvhFile(context, filepath):
            rotate_mode = scn.MhExportRotateMode,
            root_transform_only = True
            )
-        scn.objects.active = ob
+        bpy.context.view_layer.objects.active = ob
         print(("Saved %s" % bvhpath))
         return True
     else:
@@ -316,10 +316,10 @@ def loadBvhFile(context, filepath):
 
         tmp = context.object
         bpy.ops.object.mode_set(mode='POSE')
-        scn.objects.active = rig
+        bpy.context.view_layer.objects.active = rig
         bpy.ops.object.mode_set(mode='POSE')
         copyPose(tmp, rig)
-        scn.objects.active = ob
+        bpy.context.view_layer.objects.active = ob
         scn.objects.unlink(tmp)
         del tmp
         print(("Loaded %s" % bvhpath))
@@ -346,8 +346,8 @@ class VIEW3D_OT_LoadBvhButton(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     filename_ext = ".bvh"
-    filter_glob = StringProperty(default="*.bvh", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.bvh", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for bvh file",
         maxlen= 1024, default= "")
@@ -376,8 +376,8 @@ class VIEW3D_OT_SaveasBvhFileButton(bpy.types.Operator, ExportHelper):
     bl_options = {'UNDO'}
 
     filename_ext = ".bvh"
-    filter_glob = StringProperty(default="*.bvh", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.bvh", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for bvh file",
         maxlen= 1024, default= "")
@@ -569,8 +569,8 @@ class VIEW3D_OT_WriteMatricesButton(bpy.types.Operator, ExportHelper):
     bl_options = {'UNDO'}
 
     filename_ext = ".txt"
-    filter_glob = StringProperty(default="*.txt", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.txt", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for txt file",
         maxlen= 1024, default= "")

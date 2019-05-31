@@ -85,8 +85,8 @@ class VIEW3D_OT_SetSourceTargetButton(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     filename_ext = ".target"
-    filter_glob = StringProperty(default="*.target", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.target", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for target",
         maxlen= 1024, default= "")
@@ -106,8 +106,8 @@ class VIEW3D_OT_SetSourceClothingButton(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     filename_ext = ".mhclo"
-    filter_glob = StringProperty(default="*.mhclo;*.proxy", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.mhclo;*.proxy", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for clothing",
         maxlen= 1024, default= "")
@@ -127,8 +127,8 @@ class VIEW3D_OT_SetSourceVGroupButton(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     filename_ext = ".vgrp"
-    filter_glob = StringProperty(default="*.vgrp;*.rig", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.vgrp;*.rig", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for vertex groups",
         maxlen= 1024, default= "")

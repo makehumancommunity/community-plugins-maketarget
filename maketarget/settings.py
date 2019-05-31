@@ -39,6 +39,7 @@ import bpy
 import os
 from bpy.props import *
 from .utils import getMHBlenderDirectory, getMHDirectory
+from .error import *
 
 _Paths = ["MhProgramPath", "MhUserPath", "MhTargetPath", "MhClothesDir", "MhUvsDir"]
 
@@ -142,7 +143,7 @@ class OBJECT_OT_FactorySettingsButton(bpy.types.Operator):
     bl_idname = "mh.factory_settings"
     bl_label = "Restore Factory Settings"
 
-    prefix = StringProperty()
+    prefix : StringProperty()
 
     def execute(self, context):
         restoreFactorySettings(context, self.prefix)
@@ -153,8 +154,8 @@ class OBJECT_OT_SaveSettingsButton(bpy.types.Operator):
     bl_idname = "mh.save_settings"
     bl_label = "Save Settings"
 
-    tool = StringProperty()
-    prefix = StringProperty()
+    tool : StringProperty()
+    prefix : StringProperty()
 
     def execute(self, context):
         saveDefaultSettings(context, self.tool, self.prefix)
@@ -165,7 +166,7 @@ class OBJECT_OT_ReadSettingsButton(bpy.types.Operator):
     bl_idname = "mh.read_settings"
     bl_label = "Read Settings"
 
-    tool = StringProperty()
+    tool : StringProperty()
 
     def execute(self, context):
         readDefaultSettings(context, self.tool)

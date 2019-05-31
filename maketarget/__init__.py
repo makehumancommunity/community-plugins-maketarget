@@ -63,6 +63,7 @@ print(("Loading maketarget v %d.%d.%d" % bl_info["version"]))
 
 from .constantsandproperties import registerMakeTargetObjectProperties, registerMakeTargetSceneProperties
 from .operators import *
+from .error import *
 
 from . import mh
 from . import symmetry_map
@@ -89,15 +90,18 @@ class MKT_PT_MakeTargetPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
+        layout.use_property_split = True
+
         ob = context.object
         if ob:
             rig = ob.parent
         else:
             rig = None
         scn = context.scene
+        view = scn.view_settings
 
         if Thomas:
-            layout.label("Pruning")
+            layout.label(text="Pruning")
             row = layout.row()
             row.prop(ob, "MhPruneEnabled")
             row.prop(ob, "MhPruneWholeDir")
@@ -111,7 +115,7 @@ class MKT_PT_MakeTargetPanel(bpy.types.Panel):
             layout.operator("mh.make_base_obj")
 
         elif utils.isBase(ob):
-            layout.label("Load Target")
+            layout.label(text="Load Target")
             layout.operator("mh.new_target")
             layout.operator("mh.load_target")
             layout.operator("mh.load_target_from_mesh")
@@ -122,7 +126,7 @@ class MKT_PT_MakeTargetPanel(bpy.types.Panel):
 
         elif utils.isTarget(ob):
             if not ob.data.shape_keys:
-                layout.label("Warning: Internal inconsistency")
+                layout.label(text="Warning: Internal inconsistency")
                 layout.operator("mh.fix_inconsistency")
                 return
             layout.separator()
@@ -134,14 +138,14 @@ class MKT_PT_MakeTargetPanel(bpy.types.Panel):
                     continue
                 row = box.row()
                 if n == ob.active_shape_key_index:
-                    icon='LAMP'
+                    icon='LIGHT'
                 else:
                     icon='X'
-                row.label("", icon=icon)
+                row.label(text="", icon=icon)
                 row.prop(skey, "value", text=skey.name)
                 n += 1
 
-            layout.label("Load Target")
+            layout.label(text="Load Target")
             layout.operator("mh.new_target", text="New Secondary Target")
             layout.operator("mh.load_target", text="Load Secondary From File")
             layout.operator("mh.load_target_from_mesh", text="Load Secondary From Mesh")
@@ -149,19 +153,19 @@ class MKT_PT_MakeTargetPanel(bpy.types.Panel):
             if ext == ".mhclo":
                 layout.operator("mh.fit_target")
 
-            layout.label("Discard And Apply Target")
+            layout.label(text="Discard And Apply Target")
             layout.operator("mh.discard_target")
             layout.operator("mh.discard_all_targets")
             layout.operator("mh.apply_targets")
 
-            layout.label("Symmetry")
+            layout.label(text="Symmetry")
             row = layout.row()
             row.operator("mh.symmetrize_target", text="Left->Right").action = "Left"
             row.operator("mh.symmetrize_target", text="Right->Left").action = "Right"
             if Thomas:
                 row.operator("mh.symmetrize_target", text="Mirror").action = "Mirror"
 
-            layout.label("Save Target")
+            layout.label(text="Save Target")
             layout.prop(ob, "SelectedOnly")
             layout.prop(ob, "MhZeroOtherTargets")
             if ob["FilePath"]:
@@ -169,14 +173,14 @@ class MKT_PT_MakeTargetPanel(bpy.types.Panel):
             layout.operator("mh.saveas_target")
 
             if not ob.MhDeleteHelpers:
-                layout.label("Skirt Editing")
+                layout.label(text="Skirt Editing")
                 layout.operator("mh.snap_waist")
                 layout.operator("mh.straighten_skirt")
                 if ob.MhIrrelevantDeleted:
                     layout.separator()
-                    layout.label("Only %s Affected" % ob.MhAffectOnly)
+                    layout.label(text="Only %s Affected" % ob.MhAffectOnly)
                 else:
-                    layout.label("Affect Only:")
+                    layout.label(text="Affect Only:")
                     layout.prop(ob, "MhAffectOnly", expand=True)
                     #layout.operator("mh.delete_irrelevant")
 
@@ -186,18 +190,18 @@ class MKT_PT_MakeTargetPanel(bpy.types.Panel):
 
         if rig and rig.type == 'ARMATURE':
             layout.separator()
-            layout.label("Export/Import MHP")
+            layout.label(text="Export/Import MHP")
             layout.operator("mh.saveas_mhp")
             layout.operator("mh.load_mhp")
 
             layout.separator()
-            layout.label("Export/Import BVH")
+            layout.label(text="Export/Import BVH")
             layout.prop(scn, "MhExportRotateMode")
             layout.operator("mh.saveas_bvh")
             layout.operator("mh.load_bvh")
 
             layout.separator()
-            layout.label("Convert between rig weights")
+            layout.label(text="Convert between rig weights")
             layout.prop(scn, "MhSourceRig")
             layout.prop(scn, "MhTargetRig")
             layout.prop(scn, "MhPoseTargetDir")
@@ -261,10 +265,10 @@ class MKT_OT_ExportObj(bpy.types.Operator, ExportHelper):
     bl_region_type = "WINDOW"
 
     filename_ext = ".obj"
-    filter_glob = StringProperty(default="*.obj", options={'HIDDEN'})
-    filepath = StringProperty(name="File Path", description="File path for the exported OBJ file", maxlen= 1024, default= "")
+    filter_glob : StringProperty(default="*.obj", options={'HIDDEN'})
+    filepath : StringProperty(name="File Path", description="File path for the exported OBJ file", maxlen= 1024, default= "")
 
-    groupsAsMaterials = BoolProperty(name="Groups as materials", default=False)
+    groupsAsMaterials : BoolProperty(name="Groups as materials", default=False)
 
     def execute(self, context):
         utils.setObjectMode(context)
@@ -286,7 +290,8 @@ classes = [
     MKT_PT_MakeTargetPanel,
     MKT_PT_MakeTargetBatchPanel,
     MKT_PT_McpPanel,
-    MKT_OT_ExportObj
+    MKT_OT_ExportObj,
+    ErrorOperator
 ]
 
 classes.extend(MAKETARGET_OPERATOR_CLASSES)

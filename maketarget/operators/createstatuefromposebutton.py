@@ -7,7 +7,7 @@ from ..maketarget import applyArmature, unmakeBaseObj
 def createStatueFromPose(context):
     ob,rig,statue = applyArmature(context)
     scn = context.scene
-    scn.objects.active = statue
+    bpy.context.view_layer.objects.active = statue
     scn.layers = statue.layers = 10*[False] + [True] + 9*[False]
     unmakeBaseObj(statue)
 

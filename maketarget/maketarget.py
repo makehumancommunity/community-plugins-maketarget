@@ -102,18 +102,18 @@ def afterImport(context, filepath, deleteHelpers, useMaterials):
     settings = getSettings(ob)
 
     if ob.MhUseMaterials:
-        addMaterial(ob, 0, "Body", (1,1,1), (0, settings.nTotalVerts))
-        addMaterial(ob, 1, "Tongue", (0.5,0,0.5), settings.vertices["Tongue"])
-        addMaterial(ob, 2, "Joints", (0,1,0), settings.vertices["Joints"])
-        addMaterial(ob, 3, "Eyes", (0,1,1), settings.vertices["Eyes"])
-        addMaterial(ob, 4, "EyeLashes", (1,0,1), settings.vertices["EyeLashes"])
-        addMaterial(ob, 5, "LoTeeth", (0,0.5,0.5), settings.vertices["LoTeeth"])
-        addMaterial(ob, 6, "UpTeeth", (0,0.5,1), settings.vertices["UpTeeth"])
-        addMaterial(ob, 7, "Penis", (0.5,0,1), settings.vertices["Penis"])
-        addMaterial(ob, 8, "Tights", (1,0,0), settings.vertices["Tights"])
-        addMaterial(ob, 9, "Skirt", (0,0,1), settings.vertices["Skirt"])
-        addMaterial(ob, 10, "Hair", (1,1,0), settings.vertices["Hair"])
-        addMaterial(ob, 11, "Ground", (1,0.5,0.5), (settings.vertices["Hair"][1], settings.nTotalVerts))
+        addMaterial(ob, 0, "Body", (1,1,1,1), (0, settings.nTotalVerts))
+        addMaterial(ob, 1, "Tongue", (0.5,0,0.5,1), settings.vertices["Tongue"])
+        addMaterial(ob, 2, "Joints", (0,1,0,1), settings.vertices["Joints"])
+        addMaterial(ob, 3, "Eyes", (0,1,1,1), settings.vertices["Eyes"])
+        addMaterial(ob, 4, "EyeLashes", (1,0,1,1), settings.vertices["EyeLashes"])
+        addMaterial(ob, 5, "LoTeeth", (0,0.5,0.5,1), settings.vertices["LoTeeth"])
+        addMaterial(ob, 6, "UpTeeth", (0,0.5,1,1), settings.vertices["UpTeeth"])
+        addMaterial(ob, 7, "Penis", (0.5,0,1,1), settings.vertices["Penis"])
+        addMaterial(ob, 8, "Tights", (1,0,0,1), settings.vertices["Tights"])
+        addMaterial(ob, 9, "Skirt", (0,0,1,1), settings.vertices["Skirt"])
+        addMaterial(ob, 10, "Hair", (1,1,0,1), settings.vertices["Hair"])
+        addMaterial(ob, 11, "Ground", (1,0.5,0.5,1), (settings.vertices["Hair"][1], settings.nTotalVerts))
 
     if ob.MhDeleteHelpers:
         affect = "Body"
@@ -140,6 +140,7 @@ def addMaterial(ob, index, name, color, verts):
 
 def loadAndApplyTarget(context):
     bodytype = context.scene.MhBodyType
+    scn = context.scene
     if bodytype == 'None':
         return
     trgpath = os.path.join(os.path.dirname(__file__), "../makeclothes/targets", bodytype + ".target")
@@ -149,7 +150,7 @@ def loadAndApplyTarget(context):
     except FileNotFoundError:
         found = False
     if not found:
-        raise MHError("Target \"%s\" not found.\nPath \"%s\" does not seem to be the path to the MakeHuman program" % (trgpath, scn.MhProgramPath))
+        raise MHError("Target \"%s\" not found." % (trgpath))
 
     ob = context.object
     props = {}
@@ -166,6 +167,8 @@ def loadAndApplyTarget(context):
 def makeBaseObj(context):
     mh.proxy = None
     ob = context.object
+    if ob is None:
+        return
     if ob.type != 'MESH':
         return
     for mod in ob.modifiers:
@@ -228,7 +231,7 @@ def getMeshes(context):
         raise MHError("Active object %s is not a base object" % ob.name)
     trg = None
     for ob1 in scn.objects:
-        if ob1.select and ob1.type == 'MESH' and ob1 != ob:
+        if ob1.select_get() and ob1.type == 'MESH' and ob1 != ob:
             trg = ob1
             break
     if not trg:
@@ -260,7 +263,7 @@ def applyArmature(context):
         raise MHError("Parent of %s is not an armature" % ob)
 
     bpy.ops.object.select_all(action='DESELECT')
-    ob.select = True
+    ob.select_set(True)
     bpy.ops.object.duplicate()
     bpy.ops.object.shape_key_remove(all=True)
     bpy.ops.object.modifier_apply(apply_as='DATA', modifier="Armature")
@@ -357,7 +360,7 @@ def saveVerts(fp, ob, verts, saveAll, first, last, offs):
         vco = verts[n-offs]
         bv = ob.data.vertices[n-offs]
         vec = vco - bv.co
-        if vec.length > Epsilon and (saveAll or bv.select):
+        if vec.length > Epsilon and (saveAll or bv.select_get()):
             fp.write("%d %s %s %s\n" % (n, round(vec[0]), round(vec[2]), round(-vec[1])))
 
 

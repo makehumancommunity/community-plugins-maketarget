@@ -89,8 +89,8 @@ def invokeWithFileCheck(self, context, filepath):
 
 
 def drawFileCheck(self):
-    self.layout.label("File \"%s\"" % self.filepath)
-    self.layout.label("already exists. Press OK to overwrite.")
+    self.layout.label(text="File \"%s\"" % self.filepath)
+    self.layout.label(text="already exists. Press OK to overwrite.")
 
 
 #----------------------------------------------------------
@@ -99,10 +99,10 @@ def drawFileCheck(self):
 
 def checkForNumpy(layout, string):
     if not mh.foundNumpy:
-        layout.label("numpy could not be loaded,")
-        layout.label("either because it was not found")
-        layout.label("or this is a 64-bit Blender.")
-        layout.label("%s will not work" % string)
+        layout.label(text="numpy could not be loaded,")
+        layout.label(text="either because it was not found")
+        layout.label(text="or this is a 64-bit Blender.")
+        layout.label(text="%s will not work" % string)
         return False
     return True
 

@@ -26,8 +26,8 @@ class VIEW3D_OT_LoadTargetButton(bpy.types.Operator):
     bl_options = {'UNDO'}
 
     filename_ext = ".target"
-    filter_glob = StringProperty(default="*.target", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.target", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for target file",
         maxlen= 1024, default= "")

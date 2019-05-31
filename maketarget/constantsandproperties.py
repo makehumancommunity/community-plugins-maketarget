@@ -36,7 +36,7 @@ def registerMakeTargetSceneProperties():
                ('caucasian-female-young', 'Average Female', 'caucasian-female-young'),
                ],
         description="Character to load",
-        default='caucasian-female-young')
+        default='None')
 
 
 

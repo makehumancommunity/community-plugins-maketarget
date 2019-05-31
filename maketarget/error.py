@@ -63,7 +63,7 @@ class ErrorOperator(bpy.types.Operator):
     def draw(self, context):
         global theErrorLines
         for line in theErrorLines:
-            self.layout.label(line)
+            self.layout.label(text=line)
 
 
 class MHError(Exception):

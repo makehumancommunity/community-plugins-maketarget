@@ -87,7 +87,7 @@ def importBaseMhclo(context, filepath=None):
 #----------------------------------------------------------
 
 def importObj(filepath, context, addBasisKey=True):
-    scn = context.scene
+    scn = context.collection
     obname = utils.nameFromPath(filepath)
     fp = open(filepath, "rU")
     print(("Importing %s" % filepath))
@@ -146,8 +146,8 @@ def importObj(filepath, context, addBasisKey=True):
         addUvLayerBMesh(obname, me, texverts, texfaces)
 
     scn.objects.link(ob)
-    ob.select = True
-    scn.objects.active = ob
+    ob.select_set(True)
+    bpy.context.view_layer.objects.active = ob
     if addBasisKey:
         ob.shape_key_add(name="Basis")
     bpy.ops.object.shade_smooth()
@@ -168,7 +168,7 @@ def parseFace(words):
 
 
 def addUvLayerBMesh(obname, me, texverts, texfaces):
-    uvtex = me.uv_textures.new(name=obname)
+    uvtex = me.uv_layers.new(name=obname)
     uvloop = me.uv_layers[-1]
     data = uvloop.data
     n = 0
@@ -186,7 +186,7 @@ def addUvLayerBMesh(obname, me, texverts, texfaces):
 
 
 def addUvLayerNoBMesh(obname, me, texverts, texfaces):
-        uvtex = me.uv_textures.new(name=obname)
+        uvtex = me.uv_layers.new(name=obname)
         data = uvtex.data
         for n in range(len(texfaces)):
             tf = texfaces[n]

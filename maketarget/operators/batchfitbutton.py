@@ -28,4 +28,4 @@ class VIEW3D_OT_BatchFitButton(bpy.types.Operator):
         return wm.invoke_props_dialog(self, width=200, height=20)
 
     def draw(self, context):
-        self.layout.label("Really batch fit targets?")
+        self.layout.label(text="Really batch fit targets?")

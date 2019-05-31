@@ -75,7 +75,7 @@ class VIEW3D_OT_SymmetrizeTargetButton(bpy.types.Operator):
     bl_label = "Symmetrize"
     bl_description = "Symmetrize or mirror active target"
     bl_options = {'UNDO'}
-    action = StringProperty()
+    action : StringProperty()
 
     def execute(self, context):
         try:

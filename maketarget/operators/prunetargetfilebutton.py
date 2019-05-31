@@ -10,7 +10,7 @@ def pruneTarget(ob, filepath):
     lines = []
     before,after = readLines(filepath, -1,-1)
     for vn,string in after:
-        if vn < settings.nTotalVerts and ob.data.vertices[vn].select:
+        if vn < settings.nTotalVerts and ob.data.vertices[vn].select_get():
             lines.append((vn, string))
     print(("Pruning", len(before), len(after), len(lines)))
     fp = open(filepath, "w", encoding="utf-8", newline="\n")
@@ -38,8 +38,8 @@ class VIEW3D_OT_PruneTargetFileButton(bpy.types.Operator, ExportHelper):
     bl_options = {'UNDO'}
 
     filename_ext = ".target"
-    filter_glob = StringProperty(default="*.target", options={'HIDDEN'})
-    filepath = bpy.props.StringProperty(
+    filter_glob : StringProperty(default="*.target", options={'HIDDEN'})
+    filepath : StringProperty(
         name="File Path",
         description="File path used for target file",
         maxlen= 1024, default= "")
