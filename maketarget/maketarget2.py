@@ -24,6 +24,11 @@ class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
         saveBox.label(text="Save Target", icon="MESH_DATA")
         saveBox.operator("mh_community.save_primary_target", text="Save target")
 
+        symmetrizeBox = layout.box()
+        symmetrizeBox.label(text="Symmetrize", icon="MESH_DATA")
+        symmetrizeBox.operator("mh_community.symmetrize_left", text="Copy -x to +x")
+        symmetrizeBox.operator("mh_community.symmetrize_right", text="Copy +x to -x")
+
         debugBox = layout.box()
         debugBox.label(text="Debug Target", icon="MESH_DATA")
         debugBox.operator("mh_community.print_primary_target", text="Print target")
