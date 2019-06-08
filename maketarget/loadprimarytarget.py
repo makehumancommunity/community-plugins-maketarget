@@ -53,7 +53,7 @@ class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
                     pt.data[index].co[1] = pt.data[index].co[1] + y
                     pt.data[index].co[2] = pt.data[index].co[2] + z
 
-
+        self.report({'INFO'}, "Target loaded")
         return {'FINISHED'}
 
     @classmethod

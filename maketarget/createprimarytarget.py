@@ -30,4 +30,6 @@ class MHC_OT_CreatePrimaryTargetOperator(bpy.types.Operator):
         idx = context.active_object.data.shape_keys.key_blocks.find('PrimaryTarget')
         context.active_object.active_shape_key_index = idx
 
+        self.report({'INFO'},"Target initialized")
+
         return {'FINISHED'}

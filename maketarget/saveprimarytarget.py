@@ -56,4 +56,6 @@ class MHC_OT_SavePrimaryTargetOperator(bpy.types.Operator, ExportHelper):
                     z = str(diffco[2] * scaleFactor)
                     f.write(str(i) + " " + x + " " + z + " " + y + "\n")
                 i = i + 1
+
+        self.report({'INFO'}, "Target saved")
         return {'FINISHED'}

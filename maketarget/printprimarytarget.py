@@ -37,4 +37,6 @@ class MHC_OT_PrintPrimaryTargetOperator(bpy.types.Operator):
                 diffco = ptvco - btvco
                 print(str(i) + " " + str(diffco))
             i = i + 1
+
+        self.report({'INFO'}, "Target printed to console")
         return {'FINISHED'}
