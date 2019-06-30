@@ -15,7 +15,7 @@ class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
     def execute(self, context):
         filename, extension = os.path.splitext(self.filepath)
         bn = os.path.basename(filename)
-        context.scene.MhPrimaryTargetName = bn
+        #context.scene.MhPrimaryTargetName = bn
 
         obj = context.active_object
         basis = obj.shape_key_add(name="Basis", from_mix=False)
