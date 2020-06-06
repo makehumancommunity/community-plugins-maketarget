@@ -28,14 +28,15 @@ class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
         sks = obj.data.shape_keys
         pt = sks.key_blocks["PrimaryTarget"]
 
-        scaleFactor = 0.1
-        scaleMode = str(bpy.context.scene.MhScaleMode)
+        scaleFactor = 1.0
+        if hasattr(bpy.context.scene, "MhScaleMode"):
+            scaleMode = str(bpy.context.scene.MhScaleMode)
 
-        if scaleMode == "DECIMETER":
-            scaleFactor = 1.0
+            if scaleMode == "METER":
+                scaleFactor = 0.1
 
-        if scaleMode == "CENTIMETER":
-            scaleFactor = 10.0
+            if scaleMode == "CENTIMETER":
+                scaleFactor = 10.0
 
         with open(self.filepath,'r') as f:
             for line in f:
