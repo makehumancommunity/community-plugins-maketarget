@@ -24,12 +24,13 @@ class MHC_OT_CreatePrimaryTargetOperator(bpy.types.Operator):
 
         obj = context.active_object
         basis = obj.shape_key_add(name="Basis",from_mix=False)
-        primaryTarget = obj.shape_key_add(name="PrimaryTarget", from_mix=True)
+        primtarget = obj.MhPrimaryTargetName
+        primaryTarget = obj.shape_key_add(name=primtarget, from_mix=True)
         primaryTarget.value = 1.0
 
-        idx = context.active_object.data.shape_keys.key_blocks.find('PrimaryTarget')
+        idx = context.active_object.data.shape_keys.key_blocks.find(primtarget)
         context.active_object.active_shape_key_index = idx
 
-        self.report({'INFO'},"Target initialized")
+        self.report({'INFO'},"Target " + primtarget + " initialized")
 
         return {'FINISHED'}

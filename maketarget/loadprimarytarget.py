@@ -14,28 +14,30 @@ class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
 
     def execute(self, context):
         filename, extension = os.path.splitext(self.filepath)
-        bn = os.path.basename(filename)
-        #context.scene.MhPrimaryTargetName = bn
+        primtarget = os.path.basename(filename)
 
         obj = context.active_object
+        obj.MhPrimaryTargetName = primtarget
+
         basis = obj.shape_key_add(name="Basis", from_mix=False)
-        primaryTarget = obj.shape_key_add(name="PrimaryTarget", from_mix=True)
+        primaryTarget = obj.shape_key_add(name=primtarget, from_mix=True)
         primaryTarget.value = 1.0
 
-        idx = context.active_object.data.shape_keys.key_blocks.find('PrimaryTarget')
+        idx = context.active_object.data.shape_keys.key_blocks.find(primtarget)
         context.active_object.active_shape_key_index = idx
 
         sks = obj.data.shape_keys
-        pt = sks.key_blocks["PrimaryTarget"]
+        pt = sks.key_blocks[primtarget]
 
-        scaleFactor = 0.1
-        scaleMode = str(bpy.context.scene.MhScaleMode)
+        scaleFactor = 1.0
+        if hasattr(bpy.context.scene, "MhScaleMode"):
+            scaleMode = str(bpy.context.scene.MhScaleMode)
 
-        if scaleMode == "DECIMETER":
-            scaleFactor = 1.0
+            if scaleMode == "METER":
+                scaleFactor = 0.1
 
-        if scaleMode == "CENTIMETER":
-            scaleFactor = 10.0
+            if scaleMode == "CENTIMETER":
+                scaleFactor = 10.0
 
         with open(self.filepath,'r') as f:
             for line in f:
