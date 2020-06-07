@@ -17,19 +17,35 @@ class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
 
         createBox = layout.box()
         createBox.label(text="Initialize", icon="MESH_DATA")
-        createBox.operator("mh_community.create_primary_target", text="Create target")
-        createBox.operator("mh_community.load_primary_target", text="Load target")
 
-        saveBox = layout.box()
-        saveBox.label(text="Save Target", icon="MESH_DATA")
-        saveBox.operator("mh_community.save_primary_target", text="Save target")
+        base_available = False
+        for obj in scn.objects:
+            if hasattr(obj, "MhObjectType"):
+                if obj.MhObjectType == "Basemesh":
+                    base_available = True
+                    break
 
-        symmetrizeBox = layout.box()
-        symmetrizeBox.label(text="Symmetrize", icon="MESH_DATA")
-        symmetrizeBox.operator("mh_community.symmetrize_left", text="Copy -x to +x")
-        symmetrizeBox.operator("mh_community.symmetrize_right", text="Copy +x to -x")
+        obj = context.active_object
 
-        debugBox = layout.box()
-        debugBox.label(text="Debug Target", icon="MESH_DATA")
-        debugBox.operator("mh_community.print_primary_target", text="Print target")
+        if not base_available:
+            createBox.label(text="- load a base mesh first -")
+        elif obj is None or obj.type != "MESH":
+            createBox.label(text="- select the base mesh object -")
+        else:
+            createBox.prop(obj, "MhPrimaryTargetName")
+            createBox.operator("mh_community.create_primary_target", text="Create target")
+            createBox.operator("mh_community.load_primary_target", text="Load target")
+
+            saveBox = layout.box()
+            saveBox.label(text="Save Target", icon="MESH_DATA")
+            saveBox.operator("mh_community.save_primary_target", text="Save target")
+
+            symmetrizeBox = layout.box()
+            symmetrizeBox.label(text="Symmetrize", icon="MESH_DATA")
+            symmetrizeBox.operator("mh_community.symmetrize_left", text="Copy -x to +x")
+            symmetrizeBox.operator("mh_community.symmetrize_right", text="Copy +x to -x")
+
+            debugBox = layout.box()
+            debugBox.label(text="Debug Target", icon="MESH_DATA")
+            debugBox.operator("mh_community.print_primary_target", text="Print target")
 

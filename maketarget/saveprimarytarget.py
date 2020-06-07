@@ -15,14 +15,25 @@ class MHC_OT_SavePrimaryTargetOperator(bpy.types.Operator, ExportHelper):
 
     @classmethod
     def poll(self, context):
-        if context.active_object is not None:
-            if not hasattr(context.active_object, "MhObjectType"):
+        obj = context.active_object
+        if obj is not None:
+            if not hasattr(obj, "MhObjectType"):
                 return False
-            if context.active_object.select_get():
-                if context.active_object.MhObjectType == "Basemesh":
-                    if context.active_object.data.shape_keys and context.active_object.data.shape_keys.key_blocks and "PrimaryTarget" in context.active_object.data.shape_keys.key_blocks:
+            if obj.select_get():
+                if obj.MhObjectType == "Basemesh":
+                    primtarget = obj.MhPrimaryTargetName
+                    if obj.data.shape_keys and obj.data.shape_keys.key_blocks and primtarget in obj.data.shape_keys.key_blocks:
                         return True
         return False
+
+    def invoke(self, context,event):
+        primtarget = context.active_object.MhPrimaryTargetName
+        #
+        # set the relative path for the outputfile, this could be changed to reach MH custom
+        # path directly
+        #
+        self.filepath = bpy.path.clean_name(primtarget, replace="-") + ".target"
+        return super().invoke(context, event)
 
     def execute(self, context):
 
@@ -39,8 +50,9 @@ class MHC_OT_SavePrimaryTargetOperator(bpy.types.Operator, ExportHelper):
 
         obj = context.active_object
         sks = obj.data.shape_keys
+        primtarget = obj.MhPrimaryTargetName
         bt = sks.key_blocks["Basis"]
-        pt = sks.key_blocks["PrimaryTarget"]
+        pt = sks.key_blocks[primtarget]
 
         with open(self.filepath,"w") as f:
             f.write("# This is a target file for MakeHuman. It was written by MakeTarget2, which is a\n")
@@ -80,9 +92,9 @@ class MHC_OT_SavePrimaryTargetOperator(bpy.types.Operator, ExportHelper):
                         z = z.replace("-0", "-")
                     elif z.startswith("0."):
                         z = z.replace("0.", ".")
-
-                    f.write(str(i) + " " + x + " " + z + " " + y + "\n")
+                    if (not (x == "0" and y == "0" and z == "0")):
+                        f.write(str(i) + " " + x + " " + z + " " + y + "\n")
                 i = i + 1
 
-        self.report({'INFO'}, "Target saved")
+        self.report({'INFO'}, "Target " + primtarget + " saved as " + self.filepath)
         return {'FINISHED'}

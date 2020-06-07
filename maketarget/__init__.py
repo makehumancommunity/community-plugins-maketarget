@@ -47,6 +47,8 @@ __all__ = [
 ]
 
 def register():
+    if not hasattr(bpy.types.Object, "MhPrimaryTargetName"):
+        bpy.types.Object.MhPrimaryTargetName  = StringProperty(name="Target name", description="name will be used as a default for primary target and file name", default="primary_target")
 
     for cls in MAKETARGET2_CLASSES:
         register_class(cls)

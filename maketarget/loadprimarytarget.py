@@ -14,19 +14,20 @@ class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
 
     def execute(self, context):
         filename, extension = os.path.splitext(self.filepath)
-        bn = os.path.basename(filename)
-        #context.scene.MhPrimaryTargetName = bn
+        primtarget = os.path.basename(filename)
 
         obj = context.active_object
+        obj.MhPrimaryTargetName = primtarget
+
         basis = obj.shape_key_add(name="Basis", from_mix=False)
-        primaryTarget = obj.shape_key_add(name="PrimaryTarget", from_mix=True)
+        primaryTarget = obj.shape_key_add(name=primtarget, from_mix=True)
         primaryTarget.value = 1.0
 
-        idx = context.active_object.data.shape_keys.key_blocks.find('PrimaryTarget')
+        idx = context.active_object.data.shape_keys.key_blocks.find(primtarget)
         context.active_object.active_shape_key_index = idx
 
         sks = obj.data.shape_keys
-        pt = sks.key_blocks["PrimaryTarget"]
+        pt = sks.key_blocks[primtarget]
 
         scaleFactor = 1.0
         if hasattr(bpy.context.scene, "MhScaleMode"):
