@@ -22,7 +22,8 @@ The basic workflow is:
 
 * Import a human mesh using the makehuman plugin for blender (see [this introductory video](https://www.youtube.com/watch?v=eEaVZVbTJOQ&t=101s) for more information). Make sure to *not* use a body proxy. 
 * Select the body
-* Click "Initialize" in the make target panel. A shape key "PrimaryTarget" is created.
+* enter a name for your target
+* Click "Initialize" in the make target panel. A shape key using the target name is created.
 * Enter edit mode and model the target
 * Exit edit mode
 * Click "Save target" 

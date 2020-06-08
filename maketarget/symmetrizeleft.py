@@ -13,12 +13,14 @@ class MHC_OT_SymmetrizeLeftOperator(bpy.types.Operator):
 
     @classmethod
     def poll(self, context):
-        if context.active_object is not None:
-            if not hasattr(context.active_object, "MhObjectType"):
+        obj = context.active_object
+        if obj is not None:
+            if not hasattr(obj, "MhObjectType"):
                 return False
-            if context.active_object.select_get():
-                if context.active_object.MhObjectType == "Basemesh":
-                    if context.active_object.data.shape_keys and context.active_object.data.shape_keys.key_blocks and "PrimaryTarget" in context.active_object.data.shape_keys.key_blocks:
+            if obj.select_get():
+                if obj.MhObjectType == "Basemesh":
+                    primtarget = obj.MhPrimaryTargetName
+                    if obj.data.shape_keys and obj.data.shape_keys.key_blocks and primtarget in obj.data.shape_keys.key_blocks:
                         return True
         return False
 
@@ -26,7 +28,8 @@ class MHC_OT_SymmetrizeLeftOperator(bpy.types.Operator):
 
         obj = context.active_object
         sks = obj.data.shape_keys
-        pt = sks.key_blocks["PrimaryTarget"]
+        primtarget = obj.MhPrimaryTargetName
+        pt = sks.key_blocks[primtarget]
 
         for s in Left2Right.items():
             leftVertNo = s[0]

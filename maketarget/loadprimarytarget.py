@@ -28,6 +28,7 @@ class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
 
         sks = obj.data.shape_keys
         pt = sks.key_blocks[primtarget]
+        mx = len (pt.data)
 
         scaleFactor = 1.0
         if hasattr(bpy.context.scene, "MhScaleMode"):
@@ -49,11 +50,10 @@ class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
                     z = float(parts[2]) * scaleFactor
                     y = -float(parts[3]) * scaleFactor
 
-                    print(str(index) + " " + str(x) + " " + str(y) + " " + str(z))
-
-                    pt.data[index].co[0] = pt.data[index].co[0] + x
-                    pt.data[index].co[1] = pt.data[index].co[1] + y
-                    pt.data[index].co[2] = pt.data[index].co[2] + z
+                    if index < mx:      # avoid target for helpers to get in conflict if only body is loaded
+                        pt.data[index].co[0] = pt.data[index].co[0] + x
+                        pt.data[index].co[1] = pt.data[index].co[1] + y
+                        pt.data[index].co[2] = pt.data[index].co[2] + z
 
         self.report({'INFO'}, "Target loaded")
         return {'FINISHED'}
