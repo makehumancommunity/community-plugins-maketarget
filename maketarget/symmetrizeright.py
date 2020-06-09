@@ -25,22 +25,15 @@ class MHC_OT_SymmetrizeRightOperator(bpy.types.Operator):
         return False
 
     def execute(self, context):
-
+        bpy.ops.object.mode_set(mode='OBJECT')
         obj = context.active_object
         sks = obj.data.shape_keys
         primtarget = obj.MhPrimaryTargetName
         pt = sks.key_blocks[primtarget]
-
-        for s in Left2Right.items():
-            leftVertNo = s[1]
-            rightVertNo = s[0]
-
-            leftco = pt.data[leftVertNo].co
-            rightco = pt.data[rightVertNo].co
-
-            leftco[0] = -rightco[0]
-            leftco[1] = rightco[1]
-            leftco[2] = rightco[2]
+        (b, name) =  MirrorByTable(obj, pt, "l")
+        if b == False:
+            self.report({'ERROR'}, "Mirror-config missing: " + name)
+            return {'CANCELLED'}
 
         self.report({'INFO'}, "Target symmetrized")
         return {'FINISHED'}
