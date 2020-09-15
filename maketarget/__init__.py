@@ -3,6 +3,16 @@
 
 #  Author: Joel Palmius
 
+bl_info = {
+    "name": "MakeTarget2",
+    "author": "Joel Palmius",
+    "version": (2,1,0),
+    "blender": (2,80,0),
+    "location": "View3D > Properties > Make Target",
+    "description": "Create MakeHuman Targets",
+    'wiki_url': "http://www.makehumancommunity.org/wiki/Documentation:MHBlenderTools:_MakeTarget",
+    "category": "MakeHuman"}
+
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from bpy.utils import register_class, unregister_class
@@ -14,16 +24,6 @@ from .saveprimarytarget import MHC_OT_SavePrimaryTargetOperator
 from .loadprimarytarget import MHC_OT_LoadPrimaryTargetOperator
 from .symmetrizeleft import MHC_OT_SymmetrizeLeftOperator
 from .symmetrizeright import MHC_OT_SymmetrizeRightOperator
-
-bl_info = {
-    "name": "MakeTarget2",
-    "author": "Joel Palmius",
-    "version": (2,1,0),
-    "blender": (2,80,0),
-    "location": "View3D > Properties > Make Target",
-    "description": "Create MakeHuman Targets",
-    'wiki_url': "http://www.makehumancommunity.org/wiki/Documentation:MHBlenderTools:_MakeTarget",
-    "category": "MakeHuman"}
 
 MAKETARGET2_CLASSES = [
     MHC_OT_CreatePrimaryTargetOperator,

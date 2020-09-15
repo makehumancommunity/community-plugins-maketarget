@@ -4,9 +4,10 @@
 #  Author: Joel Palmius
 
 import bpy
+from . import bl_info   # to get information about version
 
 class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
-    bl_label = "MakeTarget2"
+    bl_label = bl_info["name"] + " v %d.%d.%d" % bl_info["version"]
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "MakeTarget2"
