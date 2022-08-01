@@ -38,6 +38,7 @@ class MHC_OT_SavePrimaryTargetOperator(bpy.types.Operator, ExportHelper):
     def execute(self, context):
 
         scaleFactor = 1.0
+        obj = context.active_object
 
         if hasattr(bpy.context.scene, "MhScaleMode"):
             scaleMode = str(bpy.context.scene.MhScaleMode)
@@ -47,8 +48,10 @@ class MHC_OT_SavePrimaryTargetOperator(bpy.types.Operator, ExportHelper):
 
             if scaleMode == "CENTIMETER":
                 scaleFactor = 0.1
+        else:
+            if hasattr(obj, "MhScaleFactor"):
+                scaleFactor = 1.0 / obj.MhScaleFactor
 
-        obj = context.active_object
         sks = obj.data.shape_keys
         primtarget = obj.MhPrimaryTargetName
         bt = sks.key_blocks["Basis"]
