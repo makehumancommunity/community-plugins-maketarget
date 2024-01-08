@@ -21,9 +21,9 @@ def MirrorByTable(obj, pt, direction):
     except IOError:
         return False, mirrorfilename
 
-    for idx, source in enumerate (pt.data):
+    for idx, source in enumerate (pt):
         if MirrorTable[idx]['s'] == direction:
-            dest = pt.data[MirrorTable[idx]['m']]
+            dest = pt[MirrorTable[idx]['m']]
             dest.co[0] = -source.co[0]
             dest.co[1] = source.co[1]
             dest.co[2] = source.co[2]

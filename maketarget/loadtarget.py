@@ -3,42 +3,36 @@
 
 import bpy, bpy_extras, os, re
 from bpy_extras.io_utils import ImportHelper
+from .maketarget2 import calculateScaleFactor
 from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 
-class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
+class MHC_OT_LoadTargetOperator(bpy.types.Operator, ImportHelper):
     """Load required shape keys from file (i.e load a target)"""
-    bl_idname = "mh_community.load_primary_target"
-    bl_label = "Load primary target"
+    bl_idname = "mh_community.load_target"
+    bl_label = "Load target"
 
     filter_glob : StringProperty(default='*.target', options={'HIDDEN'})
 
     def execute(self, context):
         filename, extension = os.path.splitext(self.filepath)
-        primtarget = os.path.basename(filename)
+        target = os.path.basename(filename)
 
         obj = context.active_object
-        obj.MhPrimaryTargetName = primtarget
+        obj.MhNewTargetName = target
 
-        basis = obj.shape_key_add(name="Basis", from_mix=False)
-        primaryTarget = obj.shape_key_add(name=primtarget, from_mix=True)
-        primaryTarget.value = 1.0
+        if not obj.data.shape_keys:
+            basis = obj.shape_key_add(name="Basis", from_mix=False)
+        nextTarget = obj.shape_key_add(name=target, from_mix=False)
+        nextTarget.value = 1.0
 
-        idx = context.active_object.data.shape_keys.key_blocks.find(primtarget)
+        idx = obj.data.shape_keys.key_blocks.find(target)
         context.active_object.active_shape_key_index = idx
 
         sks = obj.data.shape_keys
-        pt = sks.key_blocks[primtarget]
+        pt = sks.key_blocks[target]
         mx = len (pt.data)
 
-        scaleFactor = 1.0
-        if hasattr(bpy.context.scene, "MhScaleMode"):
-            scaleMode = str(bpy.context.scene.MhScaleMode)
-
-            if scaleMode == "METER":
-                scaleFactor = 0.1
-
-            if scaleMode == "CENTIMETER":
-                scaleFactor = 10.0
+        scaleFactor = calculateScaleFactor(bpy.context.scene, None)
 
         with open(self.filepath,'r') as f:
             for line in f:
@@ -65,6 +59,7 @@ class MHC_OT_LoadPrimaryTargetOperator(bpy.types.Operator, ImportHelper):
                 return False
             if context.active_object.select_get():
                 if context.active_object.MhObjectType == "Basemesh":
-                    if not context.active_object.data.shape_keys:
-                        return True
+                    return True
+                    #if not context.active_object.data.shape_keys:
+                    #return True
         return False

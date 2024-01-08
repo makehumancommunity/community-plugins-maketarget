@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import bpy, bpy_extras
-from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from .symmetry_map import *
 
 class MHC_OT_SymmetrizeLeftOperator(bpy.types.Operator):
@@ -19,8 +18,7 @@ class MHC_OT_SymmetrizeLeftOperator(bpy.types.Operator):
                 return False
             if obj.select_get():
                 if obj.MhObjectType == "Basemesh":
-                    primtarget = obj.MhPrimaryTargetName
-                    if obj.data.shape_keys and obj.data.shape_keys.key_blocks and primtarget in obj.data.shape_keys.key_blocks:
+                    if obj.data.shape_keys and obj.data.shape_keys.key_blocks and obj.active_shape_key_index != 0:
                         return True
         return False
 
@@ -28,9 +26,9 @@ class MHC_OT_SymmetrizeLeftOperator(bpy.types.Operator):
         bpy.ops.object.mode_set(mode='OBJECT')
         obj = context.active_object
         sks = obj.data.shape_keys
-        primtarget = obj.MhPrimaryTargetName
-        pt = sks.key_blocks[primtarget]
-        (b, name) =  MirrorByTable(obj, pt, "r")
+        idx = obj.active_shape_key_index
+        pt = sks.key_blocks[idx]
+        (b, name) =  MirrorByTable(obj, pt.data, "r")
         if b == False:
             self.report({'ERROR'}, "Mirror-config missing: " + name)
             return {'CANCELLED'}
