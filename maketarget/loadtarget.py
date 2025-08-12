@@ -55,10 +55,11 @@ class MHC_OT_LoadTargetOperator(bpy.types.Operator, ImportHelper):
     @classmethod
     def poll(self, context):
         if context.active_object is not None:
-            if not hasattr(context.active_object, "MhObjectType"):
+            obj = context.active_object
+            if not hasattr(obj, "MhObjectType"):
                 return False
-            if context.active_object.select_get():
-                if context.active_object.MhObjectType == "Basemesh":
+            if obj.select_get():
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     return True
                     #if not context.active_object.data.shape_keys:
                     #return True

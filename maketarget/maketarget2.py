@@ -4,6 +4,7 @@
 #  Authors: Joel Palmius, black-punkduck
 
 import bpy
+import os
 from . import bl_info   # to get information about version
 
 def calculateScaleFactor(scn, obj):
@@ -110,8 +111,9 @@ def createHelperMask(context):
     mod.vertex_group = group_name
     mod.invert_vertex_group = True
     
-
-
+def calculateMirrorFileName(meshtype):
+    mirrorfilename =  meshtype + ".mirror"
+    return os.path.join(os.path.dirname(__file__), "data", mirrorfilename)
 
 class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
     bl_label = bl_info["name"] + " v %d.%d.%d" % bl_info["version"]
@@ -129,7 +131,7 @@ class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
         base_available = False
         for obj in scn.objects:
             if hasattr(obj, "MhObjectType"):
-                if obj.MhObjectType == "Basemesh":
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     base_available = True
                     break
 
@@ -137,6 +139,13 @@ class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
 
         if not base_available:
             createBox.label(text="- load a base mesh first -")
+            mh2box = layout.box()
+            mh2box.label(text="MakeHuman Version 2 custom base", icon="MESH_DATA")
+            mh2box.label(text="Assign a custom base")
+            if obj is not None:
+                mh2box.prop(obj, "MhCustomBase")
+                mh2box.operator("mh_community.assign_custombase", text="Assign custom base")
+
         elif obj is None or obj.type != "MESH":
             createBox.label(text="- select the base mesh object -")
         else:
@@ -164,13 +173,14 @@ class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
                 selBox.operator("mh_community.symmetrize_left", text="Copy -x to +x")
                 selBox.operator("mh_community.symmetrize_right", text="Copy +x to -x")
 
-                helBox = layout.box()
-                helBox.label(text="Helper", icon="MESH_DATA")
-                helBox.operator("mh_community.show_helper", text="Show helper")
-                helBox.operator("mh_community.hide_helper", text="Hide helper")
-                helBox.label(text="Adapt helper mesh")
-                helBox.prop(scn, "MhHelperGeometry")
-                helBox.operator("mh_community.fix_helper", text="Adapt helper mesh to base")
+                if obj.MhObjectType == "Basemesh":
+                    helBox = layout.box()
+                    helBox.label(text="Helper", icon="MESH_DATA")
+                    helBox.operator("mh_community.show_helper", text="Show helper")
+                    helBox.operator("mh_community.hide_helper", text="Hide helper")
+                    helBox.label(text="Adapt helper mesh")
+                    helBox.prop(scn, "MhHelperGeometry")
+                    helBox.operator("mh_community.fix_helper", text="Adapt helper mesh to base")
 
                 saveBox = layout.box()
                 saveBox.label(text="Save and merge targets", icon="MESH_DATA")

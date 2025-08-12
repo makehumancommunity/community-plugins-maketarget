@@ -17,7 +17,7 @@ class MHC_OT_SymmetrizeLeftOperator(bpy.types.Operator):
             if not hasattr(obj, "MhObjectType"):
                 return False
             if obj.select_get():
-                if obj.MhObjectType == "Basemesh":
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     if obj.data.shape_keys and obj.data.shape_keys.key_blocks and obj.active_shape_key_index != 0:
                         return True
         return False

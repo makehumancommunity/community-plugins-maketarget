@@ -19,10 +19,12 @@ def _saveTarget(filepath, scale, obj, selected, bt, pt):
     else:
         selectedVerts = [v.index for v in obj.data.vertices]
 
+    mesh = obj.MhMeshType if hasattr(obj, "MhMeshType") else "hm08"
+
     with open(filepath,"w") as f:
         f.write("# This is a target file for MakeHuman. It was written by MakeTarget2, which is a\n")
         f.write("# part of the MakeHuman Community plugin for Blender.\n#\n")
-        f.write("# basemesh hm08\n")
+        f.write("# basemesh " + mesh + "\n")
         numverts = len(bt.data)
         i = 0
         while i < numverts:
@@ -77,7 +79,7 @@ class MHC_OT_SaveSelectedTargetOperator(bpy.types.Operator, ExportHelper):
             if not hasattr(obj, "MhObjectType"):
                 return False
             if obj.select_get():
-                if obj.MhObjectType == "Basemesh":
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     if obj.data.shape_keys and obj.data.shape_keys.key_blocks and obj.active_shape_key_index != 0:
                         return True
         return False
@@ -126,7 +128,7 @@ class MHC_OT_SaveAllTargetsOperator(bpy.types.Operator, ExportHelper):
             if not hasattr(obj, "MhObjectType"):
                 return False
             if obj.select_get():
-                if obj.MhObjectType == "Basemesh":
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     if obj.data.shape_keys and len(obj.data.shape_keys.key_blocks) > 1:
                         return True
         return False

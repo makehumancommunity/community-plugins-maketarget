@@ -17,6 +17,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty, CollectionProperty, FloatProperty
 from bpy.utils import register_class, unregister_class
 
+from .custombase import MHC_OT_AssignCustomObject
 from .maketarget2 import MHC_PT_MakeTarget_Panel, getTargetNames, getTargetValue, setTargetValue, setTargetKey
 from .createtarget import MHC_OT_CreateTargetOperator, MHC_OT_DeleteTargetOperator,  MHC_OT_SymmetrizeBase
 from .mergetargets import MHC_OT_MergeTargets
@@ -28,6 +29,7 @@ from .symmetrizeleft import MHC_OT_SymmetrizeLeftOperator
 from .symmetrizeright import MHC_OT_SymmetrizeRightOperator
 
 MAKETARGET2_CLASSES = [
+    MHC_OT_AssignCustomObject,
     MHC_OT_CreateTargetOperator,
     MHC_OT_DeleteTargetOperator,
     MHC_OT_SymmetrizeBase,
@@ -45,6 +47,7 @@ MAKETARGET2_CLASSES = [
 ]
 
 __all__ = [
+    "MHC_OT_AssignCustomObject",
     "MHC_OT_CreateTargetOperator",
     "MHC_OT_DeleteTargetOperator",
     "MHC_OT_SymmetrizeBase",
@@ -63,8 +66,17 @@ __all__ = [
 ]
 
 def register():
+    if not hasattr(bpy.types.Object, "MhMeshType"):
+        bpy.types.Object.MhMeshType  = StringProperty(name="Mesh type", description="mesh types to specify base mesh", default="hm08")
+
+    if not hasattr(bpy.types.Object, "MhObjectType"):
+        bpy.types.Object.MhObjectType  = StringProperty(name="Object type", description="Type of MakeHuman object is (such as Clothes, Eyes...)", default="hm08")
+
     if not hasattr(bpy.types.Object, "MhNewTargetName"):
         bpy.types.Object.MhNewTargetName  = StringProperty(name="Name", description="name will be used as a default for the first target and file name", default="CustomTarget.001")
+
+
+    bpy.types.Object.MhCustomBase  = StringProperty(name="Name", description="Use different object as custom base", default="")
 
     bpy.types.Scene.MhTargetScaleFactor = EnumProperty(name='Scale', default="0",
             items=[("0", "Don't change", ""), ("10", "10.0 (meters)", ""),("1", "1.0 (decimeters)", ""),("0.1", "0.1 (centimeters)", "")],

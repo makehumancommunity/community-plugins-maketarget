@@ -17,10 +17,11 @@ class MHC_OT_CreateTargetOperator(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         if context.active_object is not None:
-            if not hasattr(context.active_object, "MhObjectType"):
+            obj = context.active_object
+            if not hasattr(obj, "MhObjectType"):
                 return False
-            if context.active_object.select_get():
-                if context.active_object.MhObjectType == "Basemesh":
+            if obj.select_get():
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     return True
         return False
 
@@ -41,7 +42,9 @@ class MHC_OT_CreateTargetOperator(bpy.types.Operator):
         target = obj.data.shape_keys.key_blocks[idx].name
         obj.MhNewTargetName = target
 
-        createHelperMask(context)
+        if obj.MhObjectType == "Basemesh":
+            createHelperMask(context)
+
         self.report({'INFO'},"Target " + target + " initialized")
 
         return {'FINISHED'}
@@ -55,10 +58,11 @@ class MHC_OT_DeleteTargetOperator(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         if context.active_object is not None:
-            if not hasattr(context.active_object, "MhObjectType"):
+            obj = context.active_object
+            if not hasattr(obj, "MhObjectType"):
                 return False
-            if context.active_object.select_get():
-                if context.active_object.MhObjectType == "Basemesh":
+            if obj.select_get():
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     return True
         return False
 
@@ -89,10 +93,11 @@ class MHC_OT_SymmetrizeBase(bpy.types.Operator):
     @classmethod
     def poll(self, context):
         if context.active_object is not None:
-            if not hasattr(context.active_object, "MhObjectType"):
+            obj = context.active_object
+            if not hasattr(obj, "MhObjectType"):
                 return False
-            if context.active_object.select_get():
-                if context.active_object.MhObjectType == "Basemesh":
+            if obj.select_get():
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     return True
         return False
 
