@@ -88,13 +88,16 @@ class MHC_OT_SaveSelectedTargetOperator(bpy.types.Operator, ExportHelper):
 
         obj = context.active_object
 
-        # replace any "." to have a filename with only one suffix
-        target = obj.active_shape_key.name.replace(".", "-")
+        # create a file name valid for all systems
+        #
+        target = obj.active_shape_key.name
+        filename = "".join( x for x in target if (x.isalnum() or x in "-")).lower()
+
         #
         # set the relative path for the outputfile, this could be changed to reach MH custom
         # path directly
         #
-        self.filepath = bpy.path.clean_name(target, replace="-") + ".target"
+        self.filepath = bpy.path.clean_name(filename, replace="-") + ".target"
         return super().invoke(context, event)
 
     def execute(self, context):

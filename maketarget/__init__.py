@@ -73,7 +73,7 @@ def register():
         bpy.types.Object.MhObjectType  = StringProperty(name="Object type", description="Type of MakeHuman object is (such as Clothes, Eyes...)", default="hm08")
 
     if not hasattr(bpy.types.Object, "MhNewTargetName"):
-        bpy.types.Object.MhNewTargetName  = StringProperty(name="Name", description="name will be used as a default for the first target and file name", default="CustomTarget.001")
+        bpy.types.Object.MhNewTargetName  = StringProperty(name="Name", description="name will be used as a default for the first target and file name", default="customtarget.001")
 
 
     bpy.types.Object.MhCustomBase  = StringProperty(name="Name", description="Use different object as custom base", default="")

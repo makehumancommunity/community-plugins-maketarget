@@ -31,7 +31,8 @@ class MHC_OT_CreateTargetOperator(bpy.types.Operator):
         if not obj.data.shape_keys:
             basis = obj.shape_key_add(name="Basis",from_mix=False)
 
-        target = obj.MhNewTargetName
+        target = bpy.path.clean_name(obj.MhNewTargetName)
+        obj.MhNewTargetName = target
         newtarget = obj.shape_key_add(name=target, from_mix=False)
         newtarget.value = 1.0
 
