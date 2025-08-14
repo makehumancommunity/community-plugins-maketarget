@@ -150,8 +150,13 @@ class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
             createBox.label(text="- select the base mesh object -")
         else:
 
+            meshtype = "hm08"                   # preset mesh  name
+            if hasattr (obj, "MhMeshType"):
+                meshtype = obj.MhMeshType
+
             factor = calculateScaleFactor(scn, obj)
             createBox.label(text="Current Scale: " + str(factor))
+            createBox.label(text="Current Base: " + meshtype)
             createBox.prop(scn, "MhTargetScaleFactor", text="Scale")
             createBox.operator("mh_community.symmetrize_base", text="Symmetrize base")
 
