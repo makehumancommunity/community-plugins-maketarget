@@ -88,7 +88,7 @@ class Helper:
 
     def readHelper(self, filepath):
         try:
-            tmpl = open(filepath, "rU")
+            tmpl = open(filepath, "r")
         except:
             return False
 
@@ -185,7 +185,7 @@ class MHC_OT_FixHelper(bpy.types.Operator):
         h = Helper()
         res = h.readHelper(filepath)
         if res is False:
-            self.report({'ERROR'}, filename + " (proxy-weights) are missing")
+            self.report({'ERROR'}, filepath + " (proxy-weights) are missing")
             return {'CANCELLED'}
 
         # modify with a scale of 1.0 (so false)
