@@ -4,7 +4,7 @@ This repository contains a version of MakeTarget which is capable to work with M
 
 ## Requirements
 
-This version is tested with blender version 4.5 LTS. There is a maketarget inside [the makehuman plugin for blender II](https://github.com/makehumancommunity/mpfb2), which can be used for MakeHuman Version 1 or for the hm08 mesh of Version 2.
+This version is tested with blender version 4.5 LTS. There is a maketarget inside [the makehuman plugin for blender II] (https://github.com/makehumancommunity/mpfb2), which can be used for MakeHuman Version 1 or for the hm08 mesh of Version 2.
 
 This version of MakeTarget should be used for MakeHuman Version 2, especially for non-hm08 meshes.
 
@@ -39,7 +39,8 @@ The basic workflow for a different mesh (custom base) is:
 
 * import obj file or load file with the standard base
 * Set scale. If the file is the unchanged base for MakeHuman II, it would be normally 10.
-* Assign the base. System will detect if a mirror table in the data directory of maketarget with that name is available, currently available are hm08 and mh2bot.
+* Enter the name of the base.
+* Assign the base. System will detect if a mirror table is available in the data directory of maketarget (a file with the basename and the suffix .mirror). Currently available are hm08 and mh2bot.
 * Enter a name for your target
 * Click "Add a new target" in the make target panel. A shape key using the target name is created.
 * Enter edit mode and model the target.
