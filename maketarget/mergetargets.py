@@ -22,7 +22,7 @@ class MHC_OT_MergeTargets(bpy.types.Operator):
             if len(obj.data.shape_keys.key_blocks) < 3:
                 return False
             if obj.select_get():
-                if obj.MhObjectType == "Basemesh":
+                if obj.MhObjectType == "Basemesh" or obj.MhObjectType == "_CustomBase_":
                     return True
         return False
 

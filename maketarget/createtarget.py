@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import os
 import bpy
 import bmesh
 from .symmetry_map import *
@@ -31,9 +32,11 @@ class MHC_OT_CreateTargetOperator(bpy.types.Operator):
         if not obj.data.shape_keys:
             basis = obj.shape_key_add(name="Basis",from_mix=False)
 
-        target = bpy.path.clean_name(obj.MhNewTargetName)
-        obj.MhNewTargetName = target
-        newtarget = obj.shape_key_add(name=target, from_mix=False)
+        name, extension = os.path.splitext(obj.MhNewTargetName)
+        target = bpy.path.clean_name(name)
+
+        obj.MhNewTargetName = target + extension
+        newtarget = obj.shape_key_add(name=obj.MhNewTargetName, from_mix=False)
         newtarget.value = 1.0
 
         # set to last index

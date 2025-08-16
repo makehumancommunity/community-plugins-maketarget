@@ -4,7 +4,7 @@
 import bpy
 import os
 
-from .maketarget2 import calculateMirrorFileName
+from .maketarget2 import getMirrorFileName
 
 class MHC_OT_AssignCustomObject(bpy.types.Operator):
     """Assigns a custom object as Basemesh"""
@@ -18,9 +18,7 @@ class MHC_OT_AssignCustomObject(bpy.types.Operator):
             obj = context.active_object
             if not hasattr(obj, "MhCustomBase") or obj.MhCustomBase == "":
                 return False
-            mirrorfile = calculateMirrorFileName(obj.MhCustomBase)
-            if os.path.isfile(mirrorfile):
-                return True
+            return True
         return False
 
     def execute(self, context):
@@ -28,5 +26,6 @@ class MHC_OT_AssignCustomObject(bpy.types.Operator):
         print ("Assign", obj.MhCustomBase)
         obj.MhMeshType = obj.MhCustomBase
         obj.MhObjectType = "_CustomBase_"
+        obj.MhMirrorFile = getMirrorFileName(obj.MhCustomBase)
         return {'FINISHED'}
 

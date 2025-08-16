@@ -76,14 +76,28 @@ class Helper:
         return ((s0, s1, s2))
 
     def modifyHelper(self, base, target, scale):
+        #
+        # the helper may show very small changes without being changed
+        # because of the barycentric, so it is only changed when there
+        # is at least 0.001 difference
+        #
         first = self.firstVert
         if scale:
             scales = h.getScales(base)
             for n in range (0, len(self.refVerts)):
-                target[n+first].co = self.refVerts[n].updateWithScale(target, scales)
+                before = target[n+first].co
+                after = self.refVerts[n].updateWithScale(target, scales)
+                l = (before - after).length
+                if l > 0.001:
+                    target[n+first].co = after
         else:
             for n in range (0, len(self.refVerts)):
-                target[n+first].co = self.refVerts[n].update(target)
+                before = target[n+first].co
+                after = self.refVerts[n].update(target)
+                l = (before - after).length
+                if l > 0.001:
+                    target[n+first].co = after
+
 
 
     def readHelper(self, filepath):

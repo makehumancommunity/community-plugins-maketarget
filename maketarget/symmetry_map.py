@@ -4,13 +4,8 @@ import os
 def MirrorByTable(obj, pt, direction):
 
     MirrorTable = {}
-
-    meshtype = "hm08"                   # preset mesh  name
-    if hasattr (obj, "MhMeshType"):
-        meshtype = obj.MhMeshType
-
-    mirrorfilename =  meshtype + ".mirror"
-    mirrorfile = os.path.join(os.path.dirname(__file__), "data", mirrorfilename)
+    mirrorfile = obj.MhMirrorFile
+    print ("Using mirror: ", obj.MhMirrorFile)
     try:
         f = open(mirrorfile)
         for line in f:
@@ -19,7 +14,7 @@ def MirrorByTable(obj, pt, direction):
                 MirrorTable[int (m.group(1))] = { 'm': int(m.group(2)), 's': m.group(3) }
         f.close()
     except IOError:
-        return False, mirrorfilename
+        return False, mirrorfile
 
     for idx, source in enumerate (pt):
         if MirrorTable[idx]['s'] == direction:
@@ -30,5 +25,5 @@ def MirrorByTable(obj, pt, direction):
         elif MirrorTable[idx]['s'] == 'm':
             source.co[0] = 0
 
-    return True, mirrorfilename
+    return True, mirrorfile
 

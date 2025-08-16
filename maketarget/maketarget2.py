@@ -36,7 +36,6 @@ def calculateScaleFactor(scn, obj):
     return(1.0)
 
 def getTargetNames(self,context):
-
     targetlist = []
     if context is not None and context.active_object is not None:
         obj = context.active_object
@@ -111,9 +110,12 @@ def createHelperMask(context):
     mod.vertex_group = group_name
     mod.invert_vertex_group = True
     
-def calculateMirrorFileName(meshtype):
+def getMirrorFileName(meshtype):
     mirrorfilename =  meshtype + ".mirror"
-    return os.path.join(os.path.dirname(__file__), "data", mirrorfilename)
+    path = os.path.join(os.path.dirname(__file__), "data", mirrorfilename)
+    path = path if os.path.isfile(path) else ""
+    return path
+
 
 class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
     bl_label = bl_info["name"] + " v %d.%d.%d" % bl_info["version"]
@@ -149,16 +151,21 @@ class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
         elif obj is None or obj.type != "MESH":
             createBox.label(text="- select the base mesh object -")
         else:
-
-            meshtype = "hm08"                   # preset mesh  name
-            if hasattr (obj, "MhMeshType"):
-                meshtype = obj.MhMeshType
+            meshtype = obj.MhMeshType
+            createBox.label(text="Current Base: " + meshtype)
+            createBox.prop(obj, "MhCustomBase")
+            createBox.operator("mh_community.assign_custombase", text="Change custom base")
 
             factor = calculateScaleFactor(scn, obj)
             createBox.label(text="Current Scale: " + str(factor))
-            createBox.label(text="Current Base: " + meshtype)
             createBox.prop(scn, "MhTargetScaleFactor", text="Scale")
-            createBox.operator("mh_community.symmetrize_base", text="Symmetrize base")
+
+            # symmetry only works with mirror file
+            #
+            if obj.MhMirrorFile != "":
+                createBox.operator("mh_community.symmetrize_base", text="Symmetrize base")
+            else:
+                createBox.label(text="No mirror file available")
 
             createBox.prop(obj, "MhNewTargetName")
 
@@ -174,10 +181,15 @@ class MHC_PT_MakeTarget_Panel(bpy.types.Panel):
                 selBox.prop(scn, "MhTargets", text="Select")
                 selBox.prop(obj, "MhTargetValue", text="Value", slider=True)
 
-                selBox.label(text="Symmetrize")
-                selBox.operator("mh_community.symmetrize_left", text="Copy -x to +x")
-                selBox.operator("mh_community.symmetrize_right", text="Copy +x to -x")
+                # symmetry only works with mirror file
+                #
+                if obj.MhMirrorFile != "":
+                    selBox.label(text="Symmetrize")
+                    selBox.operator("mh_community.symmetrize_left", text="Copy -x to +x")
+                    selBox.operator("mh_community.symmetrize_right", text="Copy +x to -x")
 
+                # helpers are still only for the basemesh
+                #
                 if obj.MhObjectType == "Basemesh":
                     helBox = layout.box()
                     helBox.label(text="Helper", icon="MESH_DATA")

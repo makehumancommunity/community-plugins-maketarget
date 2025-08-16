@@ -18,7 +18,7 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty, C
 from bpy.utils import register_class, unregister_class
 
 from .custombase import MHC_OT_AssignCustomObject
-from .maketarget2 import MHC_PT_MakeTarget_Panel, getTargetNames, getTargetValue, setTargetValue, setTargetKey
+from .maketarget2 import MHC_PT_MakeTarget_Panel, getTargetNames, getTargetValue, setTargetValue, setTargetKey, getMirrorFileName
 from .createtarget import MHC_OT_CreateTargetOperator, MHC_OT_DeleteTargetOperator,  MHC_OT_SymmetrizeBase
 from .mergetargets import MHC_OT_MergeTargets
 from .printtarget import MHC_OT_PrintSelectedTargetOperator
@@ -67,16 +67,18 @@ __all__ = [
 
 def register():
     if not hasattr(bpy.types.Object, "MhMeshType"):
-        bpy.types.Object.MhMeshType  = StringProperty(name="Mesh type", description="mesh types to specify base mesh", default="hm08")
+        meshtype = "hm08"
+        bpy.types.Object.MhMeshType  = StringProperty(name="Mesh type", description="mesh types to specify base mesh", default=meshtype)
 
     if not hasattr(bpy.types.Object, "MhObjectType"):
         bpy.types.Object.MhObjectType  = StringProperty(name="Object type", description="Type of MakeHuman object is (such as Clothes, Eyes...)", default="hm08")
 
     if not hasattr(bpy.types.Object, "MhNewTargetName"):
-        bpy.types.Object.MhNewTargetName  = StringProperty(name="Name", description="name will be used as a default for the first target and file name", default="customtarget.001")
+        bpy.types.Object.MhNewTargetName  = StringProperty(name="Targetname", description="name will be used as a default for the first target and file name", default="customtarget.001")
 
-
-    bpy.types.Object.MhCustomBase  = StringProperty(name="Name", description="Use different object as custom base", default="")
+    mhfiledefault = getMirrorFileName(meshtype)
+    bpy.types.Object.MhCustomBase  = StringProperty(name="Custom Basename", description="Use different object as custom base", default="")
+    bpy.types.Object.MhMirrorFile  = StringProperty(name="Mirrorfile", description="Holds the mirrorfile", default=mhfiledefault)
 
     bpy.types.Scene.MhTargetScaleFactor = EnumProperty(name='Scale', default="0",
             items=[("0", "Don't change", ""), ("10", "10.0 (meters)", ""),("1", "1.0 (decimeters)", ""),("0.1", "0.1 (centimeters)", "")],
@@ -92,7 +94,6 @@ def register():
             default=1.0, get=getTargetValue, set=setTargetValue, min=0.0, max=1.0)
 
     bpy.types.Object.MhTargetSelVertsOnly = BoolProperty(name='SelVertsOnly', description="use selected verts only", default=False)
-
 
     for cls in MAKETARGET2_CLASSES:
         register_class(cls)
