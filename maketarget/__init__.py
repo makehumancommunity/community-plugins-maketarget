@@ -1,15 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-#  Author: Joel Palmius
+#  Author: black-punkduck, Joel Palmius
 
 bl_info = {
     "name": "MakeTarget2",
-    "author": "Joel Palmius, black-punkduck",
-    "version": (3,1,0),
+    "author": "black-punkduck, Joel Palmius",
+    "version": (3,1,1),
     "blender": (2,80,0),
     "location": "View3D > Properties > Make Target",
-    "description": "Create MakeHuman Targets",
+    "description": "Create MakeHuman Targets, standalone version, capable to work with MakeHuman 2.",
     'wiki_url': "http://www.makehumancommunity.org/wiki/Documentation:TargetsV2",
     "category": "MakeHuman"}
 
@@ -66,8 +66,8 @@ __all__ = [
 ]
 
 def register():
+    meshtype = "hm08"
     if not hasattr(bpy.types.Object, "MhMeshType"):
-        meshtype = "hm08"
         bpy.types.Object.MhMeshType  = StringProperty(name="Mesh type", description="mesh types to specify base mesh", default=meshtype)
 
     if not hasattr(bpy.types.Object, "MhObjectType"):
@@ -77,7 +77,7 @@ def register():
         bpy.types.Object.MhNewTargetName  = StringProperty(name="Targetname", description="name will be used as a default for the first target and file name", default="customtarget.001")
 
     mhfiledefault = getMirrorFileName(meshtype)
-    bpy.types.Object.MhCustomBase  = StringProperty(name="Custom Basename", description="Use different object as custom base", default="")
+    bpy.types.Object.MhCustomBase  = StringProperty(name="Custom Basename", description="Use different object as custom base. Also determines name of the mirror file.", default="")
     bpy.types.Object.MhMirrorFile  = StringProperty(name="Mirrorfile", description="Holds the mirrorfile", default=mhfiledefault)
 
     bpy.types.Scene.MhTargetScaleFactor = EnumProperty(name='Scale', default="0",

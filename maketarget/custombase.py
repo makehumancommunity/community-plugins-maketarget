@@ -27,5 +27,10 @@ class MHC_OT_AssignCustomObject(bpy.types.Operator):
         obj.MhMeshType = obj.MhCustomBase
         obj.MhObjectType = "_CustomBase_"
         obj.MhMirrorFile = getMirrorFileName(obj.MhCustomBase)
+        if obj.MhMirrorFile == '':
+            path = os.path.join(os.path.dirname(__file__), "data")
+            self.report({'WARNING'}, "Mesh type assigned to " + obj.MhMeshType+ ". This mesh type has no mirror file in " + path)
+        else:
+            self.report({'INFO'}, "Mesh type assigned to " + obj.MhMeshType+ ", mirror file: "+ obj.MhMirrorFile)
         return {'FINISHED'}
 
