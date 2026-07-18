@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 
 #  Author: black-punkduck, Joel Palmius
+# changes for 5.x added
 
 bl_info = {
     "name": "MakeTarget2",
     "author": "black-punkduck, Joel Palmius",
-    "version": (3,1,1),
-    "blender": (2,80,0),
+    "version": (3,1,2),
+    "blender": (4,5,0),
     "location": "View3D > Properties > Make Target",
     "description": "Create MakeHuman Targets, standalone version, capable to work with MakeHuman 2.",
     'wiki_url': "http://www.makehumancommunity.org/wiki/Documentation:TargetsV2",
@@ -18,7 +19,7 @@ from bpy.props import BoolProperty, StringProperty, EnumProperty, IntProperty, C
 from bpy.utils import register_class, unregister_class
 
 from .custombase import MHC_OT_AssignCustomObject
-from .maketarget2 import MHC_PT_MakeTarget_Panel, getTargetNames, getTargetValue, setTargetValue, setTargetKey, getMirrorFileName
+from .maketarget2 import MHC_PT_MakeTarget_Panel, getTargetNames, getTargetValue, setTargetValue, setTargetKey, getTargetKey, getMirrorFileName
 from .createtarget import MHC_OT_CreateTargetOperator, MHC_OT_DeleteTargetOperator,  MHC_OT_SymmetrizeBase
 from .mergetargets import MHC_OT_MergeTargets
 from .printtarget import MHC_OT_PrintSelectedTargetOperator
@@ -84,7 +85,7 @@ def register():
             items=[("0", "Don't change", ""), ("10", "10.0 (meters)", ""),("1", "1.0 (decimeters)", ""),("0.1", "0.1 (centimeters)", "")],
             description= "Depending how the character is loaded, a different scale must be used, MPFB works with 10.0, MakeClothes with 1.0")
 
-    bpy.types.Scene.MhTargets = EnumProperty(name='Target', items=getTargetNames, set=setTargetKey, description= "Targets to select")
+    bpy.types.Scene.MhTargets = EnumProperty(name='Target', items=getTargetNames, set=setTargetKey, get=getTargetKey, description= "Targets to select")
 
     bpy.types.Scene.MhHelperGeometry = EnumProperty(name="Type", default="basehelper",
             items=[("basehelper", "Base (Standard Pose)", ""), ("femalehelper", "Female (Standard Pose)", ""),("malehelper", "Male (Standard Pose)", "")],

@@ -9,7 +9,7 @@ def MirrorByTable(obj, pt, direction):
     try:
         f = open(mirrorfile)
         for line in f:
-            m=re.search("(\d+)\s+(\d+)\s+(\w+)", line)
+            m=re.search(r"(\d+)\s+(\d+)\s+(\w+)", line)
             if (m is not None):
                 MirrorTable[int (m.group(1))] = { 'm': int(m.group(2)), 's': m.group(3) }
         f.close()

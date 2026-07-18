@@ -53,6 +53,9 @@ def getTargetNames(self,context):
                     targetlist.append((str(index),target.name,''))
     return targetlist
 
+def getTargetKey(self):
+    return 0
+
 def setTargetKey(self, value):
     """
     select shape key 
